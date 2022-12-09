@@ -1,19 +1,23 @@
-public class Circle {
-	int radius;
+
+public class Circle implements Shape {
+	private int radius; //반지름
+	public int getRadius() {
+		return this.radius;
+	}
+	public void setRadius() {
+		this.radius = radius;
+	}
 	public Circle(int radius) {
 		this.radius = radius;
 	}
-	public void set(int radius) {
-		this.radius = radius;
+	@Override
+	public void draw() {
+		System.out.println("반지름이" + radius + "인 원입니다.");		
+	}
+
+	@Override
+	public double getArea() {
+		return PI*radius*radius;
 	}
 	
-	public static void main(String[] args) {
-	Circle ob1 = new Circle(1);	
-	Circle ob2 = new Circle(2);	
-	Circle ob3 = new Circle(3);
-	
-	ob1.set(4);
-	ob2.set(5);
-	ob3.set(6);
-	}
 }
