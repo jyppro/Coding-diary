@@ -1,11 +1,35 @@
-package week04;
-
-public class Student extends Person {
-	public void set() {
-	age = 30;  // ½´ÆÛÅ¬·¡½ºÀÇ µğÆúÆ® ¸â¹ö Á¢±Ù °¡´É
-	name = "È«±æµ¿";  // ½´ÆÛÅ¬·¡½ºÀÇ public ¸â¹ö Á¢±Ù °¡´É
-	height = 175;  // ½´ÆÛÅ¬·¡½ºÀÇ protected ¸â¹ö Á¢±Ù °¡´É
-	//weight = 99;  // ¿À·ù, ½´ÆÛÅ¬·¡½ºÀÇ private Á¢±Ù ºÒ°¡
-	setWeight(99);  // private ¸â¹ö weight´Â setWeight() À¸·Î °£Á¢ Á¢±Ù
+public class Student {
+	private int studentId;
+	private String studentName;
+	private String major;
+	//ìƒì„±ì
+	public Student(int studentId, String studentName, String major) {
+		this.studentId = studentId;
+		this.studentName = studentName;
+		this.major = major;
 	}
+	//ë©”ì†Œë“œ
+	public int getStudentId() {
+		return studentId;
+	}
+	public void setStudentId(int studentId) {
+		this.studentId = studentId;
+	}
+	public String getStudentName() {
+		return studentName;
+	}
+	public void setStudentName(String studentName) {
+		this.studentName = studentName;
+	}
+	public String getMajor() {
+		return major;
+	}
+	public void setMajor(String major) {
+		this.major = major;
+	}
+	@Override
+	public String toString() {
+		return "Student [studentId=" + studentId + ", studentName=" + studentName + ", major=" + major + "]";
+	}
+	
 }
