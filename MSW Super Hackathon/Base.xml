@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="b917704e-b75f-4ff7-8dc5-64c3efd0f662" Language="Lua" Name="Base" Type="Component" Source="None" ModifyTime="2022-11-27T05:34:47.7895013+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="DestroyDelay" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="DestroyEffect" Type="Entity" DefaultValue="c399c603-becb-482b-85f4-2d1400ac74cb" SyncDirection="All" />
+    <CodeBlockProperty Name="BlackUI_Back" Type="Entity" DefaultValue="0a1496d1-def1-468d-ad37-6b95d339466a" SyncDirection="None" />
+    <CodeBlockProperty Name="RegiUI_Back" Type="Entity" DefaultValue="694a9d99-4d1c-4c35-bb19-2f4e886626f1" SyncDirection="None" />
+    <CodeBlockProperty Name="BlackUI_Front" Type="Entity" DefaultValue="5ec13d15-bb96-4eb5-a9c8-1c66e2ed7992" SyncDirection="None" />
+    <CodeBlockProperty Name="RegiUI_Front" Type="Entity" DefaultValue="bfa00a80-3eb5-4c00-9372-187793781108" SyncDirection="None" />
+    <CodeBlockProperty Name="system" Type="Entity" DefaultValue="d7c43fb2-cea0-461f-805e-1b0da82d5049" SyncDirection="All" />
+    <CodeBlockProperty Name="Regi" Type="Entity" DefaultValue="d76a4137-1181-49f3-b7d3-c485e4118746" SyncDirection="None" />
+    <CodeBlockProperty Name="Black" Type="Entity" DefaultValue="7e12e8e7-d4c5-4a4d-96b4-b4a0a3697f84" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="UnderAttack" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+if _UserService.LocalPlayer.Common.is_left == false and self.Entity.Common.is_left == false then -- 블랙윙팀 공격받을 때 알림
+	self.BlackUI_Back.Enable = true
+	self.BlackUI_Back.SpriteGUIRendererComponent.Color.a = 1
+	self.BlackUI_Front.SpriteGUIRendererComponent.Color.a = 1
+	self.BlackUI_Front.TextComponent.FontColor.a = 1
+	wait(2)
+	self.BlackUI_Back.SpriteGUIRendererComponent.Color.a = 0.5
+	self.BlackUI_Front.SpriteGUIRendererComponent.Color.a = 0.5
+	self.BlackUI_Front.TextComponent.FontColor.a = 0.5
+	wait(2)
+	self.BlackUI_Back.SpriteGUIRendererComponent.Color.a = 0
+	self.BlackUI_Front.SpriteGUIRendererComponent.Color.a = 0
+	self.BlackUI_Front.TextComponent.FontColor.a = 0
+elseif _UserService.LocalPlayer.Common.is_left == true and self.Entity.Common.is_left == true then -- 레지스탕스팀 공격받을 떄 알림
+	self.RegiUI_Back.Enable = true
+	self.RegiUI_Back.SpriteGUIRendererComponent.Color.a = 1
+	self.RegiUI_Front.SpriteGUIRendererComponent.Color.a = 1
+	self.RegiUI_Front.TextComponent.FontColor.a = 1
+	wait(2)
+	self.RegiUI_Back.SpriteGUIRendererComponent.Color.a = 0.5
+	self.RegiUI_Front.SpriteGUIRendererComponent.Color.a = 0.5
+	self.RegiUI_Front.TextComponent.FontColor.a = 0.5
+	wait(2)
+	self.RegiUI_Back.SpriteGUIRendererComponent.Color.a = 0
+	self.RegiUI_Front.SpriteGUIRendererComponent.Color.a = 0
+	self.RegiUI_Front.TextComponent.FontColor.a = 0
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnDestroy" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+
+self.system.WinPage_Open:Open()
+self:WinObj()
+local left_win = true
+if self.Entity.Common.is_left == true then
+	self.system.WinnerText:Result_Black()
+elseif self.Entity.Common.is_left == false then
+	self.system.WinnerText:Result_Regi()
+	left_win = false
+end
+
+local delayHide = function()
+	self.Entity:SetEnable(false)
+	self.DestroyEffect.Enable = true
+end
+
+_TimerService:SetTimerOnce(delayHide, self.DestroyDelay)
+wait(1)
+self.DestroyEffect.Enable = false
+local win = {}
+local lose = {}
+local win_point = {}
+local lose_point = {}
+for k,v in pairs(_UserService.UserEntities) do
+	if(left_win) then
+		if(v.Common.is_left) then
+			table.insert(win,v.PlayerComponent.Nickname)
+			table.insert(win_point,self.system.RankingComponent:search_rank(v.PlayerComponent.Nickname))
+		else
+			table.insert(lose,v.PlayerComponent.Nickname)
+			table.insert(lose_point,self.system.RankingComponent:search_rank(v.PlayerComponent.Nickname))
+		end
+	else
+		if(v.Common.is_left == false) then
+			table.insert(win,v.PlayerComponent.Nickname)
+			table.insert(win_point,self.system.RankingComponent:search_rank(v.PlayerComponent.Nickname))
+		else
+			table.insert(lose,v.PlayerComponent.Nickname)
+			table.insert(lose_point,self.system.RankingComponent:search_rank(v.PlayerComponent.Nickname))
+		end
+	end
+end
+self.system.RankingComponent:ELO(win[1],win[2],win_point[1],win_point[2],lose[1],lose[2],lose_point[1],lose_point[2])
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="WinObj" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+if self.Entity.Common.is_left == true then
+	self.Regi.Enable = true
+elseif self.Entity.Common.is_left == false then
+	self.Black.Enable = true
+end
+
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleHitEvent" EventName="HitEvent" Target="self" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local AttackCenter = event.AttackCenter
+local AttackerEntity = event.AttackerEntity
+local Damages = event.Damages
+local Extra = event.Extra
+local FeedbackAction = event.FeedbackAction
+local IsCritical = event.IsCritical
+local TotalDamage = event.TotalDamage
+--------------------------------------------------------
+if self:IsClient() then return end
+if AttackerEntity.Common.is_left ~= self.Entity.Common.is_left then
+	self:UnderAttack()
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
