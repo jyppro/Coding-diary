@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="6b6a3d91-8204-4870-a995-c308e9bfedb0" Language="Lua" Name="BaseHealComponent" Type="Component" Source="None" ModifyTime="2022-11-26T18:04:30.8464208+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties />
+  <Methods>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+local a = function()
+	local HP = self.Entity.Common.HP
+	local MaxHP = self.Entity.Common.MaxHP
+	if(MaxHP - HP > 5)then
+		self.Entity.Common.HP = HP + 5
+	else
+		self.Entity.Common.HP = MaxHP
+	end
+end
+_TimerService:SetTimerRepeat(a,1)
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>
