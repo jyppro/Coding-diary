@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="2f513845-3652-42aa-bfe0-d89b5713f3a9" Language="Lua" Name="BlockComponent_R" Type="Component" Source="None" ModifyTime="2022-11-23T17:22:27.5406542+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties />
+  <Methods />
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleTriggerStayEvent" EventName="TriggerStayEvent" Target="self" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local TriggerBodyEntity = event.TriggerBodyEntity
+--------------------------------------------------------
+local com = TriggerBodyEntity.Common
+if(com == nil) then return end
+if(com.is_player and com.is_left == true)then
+	TriggerBodyEntity.RigidbodyComponent:SetForce(Vector2(-2,1))
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
