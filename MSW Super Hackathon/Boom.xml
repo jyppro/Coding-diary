@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="66aac2b5-52b9-43e4-a5e7-8d4bbbf3fd73" Language="Lua" Name="Boom" Type="Component" Source="None" ModifyTime="2022-11-27T22:14:46.8439768+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="objectPool" Type="Component" DefaultValue="486fce22-2b6c-43db-952f-df4d3df61247:ObjectPool" SyncDirection="All" />
+    <CodeBlockProperty Name="timer" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="is_timer" Type="boolean" DefaultValue="true" SyncDirection="All" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="Start" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+-- 실행 전에 초기화해야 하는 변수들과 위치는 다시 초기화 필요 
+local Fire = function()
+	local entity = self.objectPool:GetPooledEntity()
+	entity.BoomBall_trigger.currentLifeTime = entity.BoomBall_trigger.lifetime
+	entity.TransformComponent.WorldPosition = self.Entity.TransformComponent.WorldPosition
+	entity.Enable = true
+end
+
+ _TimerService:SetTimerRepeat(Fire, 5)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self:Start()
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>
