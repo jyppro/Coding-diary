@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="57606c17-74b3-42db-a01e-87c9d8edc7cf" Language="Lua" Name="BoomBall_trigger" Type="Extend" Source="None" Target="MOD.Core.TriggerComponent" ModifyTime="2022-11-27T22:15:01.043564+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="lifetime" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="currentLifeTime" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="direct" Type="number" DefaultValue="0" SyncDirection="All" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="OnUpdate" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="delta" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+-- 이동
+if self.Entity.Common.is_left == true then
+	self.Entity.MovementComponent:MoveToDirection(Vector2(self.direct,0),delta)
+else
+	self.Entity.MovementComponent:MoveToDirection(Vector2(-(self.direct),0),delta)
+end
+
+-- 수명이 다하면 삭제
+self.currentLifeTime = self.currentLifeTime - delta
+if self.currentLifeTime <= 0 then
+	self.Entity.Enable = false
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnEnterTriggerBody" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="enterEvent" Type="TriggerEnterEvent" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if (enterEvent.TriggerBodyEntity.Common.is_left ~= self.Entity.Common.is_left) and enterEvent.TriggerBodyEntity.Common.is_neutral == false then
+	self.direct = 0 -- 멈추고
+	self.currentLifeTime = 0.6
+	local Xpos = self.Entity.TransformComponent.Position.x
+	local Ypos = self.Entity.TransformComponent.Position.y
+	self.Entity.Enable = false
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	if self.Entity.Common.is_left == true then
+		local bang_left = _SpawnService:SpawnByModelId("model://ec7bdb21-5c92-4d06-a243-66e30b5a8c48", "MiniBoomBang", Vector3(Xpos,Ypos,0), parent) -- 리소스 바꾸기
+		bang_left:Destroy(1.2)
+	else
+		local bang_right = _SpawnService:SpawnByModelId("model://441a810a-fb52-44f5-bd5e-f2131e5acbba","AndroidBoomBang",Vector3(Xpos,Ypos,0),parent)
+		bang_right:Destroy(1.2)
+	end
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnLeaveTriggerBody" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="leaveEvent" Type="TriggerLeaveEvent" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+self.direct = 2
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnDestroy" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.Entity.Bang:AttackNear()
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>
