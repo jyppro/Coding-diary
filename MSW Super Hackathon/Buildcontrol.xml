@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="a37b28d3-caf1-4427-8e44-749cc9c8a2ee" Language="Lua" Name="Buildcontrol" Type="Component" Source="None" ModifyTime="2022-11-18T03:39:32.4282902+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="E" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+  </Properties>
+  <Methods />
+  <EntityEventHandlers />
+</CodeBlockFile>
