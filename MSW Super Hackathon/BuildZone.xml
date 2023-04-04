@@ -1,0 +1,377 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="0fc4bfb4-702f-41b6-986e-99eedb9e3505" Language="Lua" Name="BuildZone" Type="Component" Source="None" ModifyTime="2022-11-27T22:43:21.2174431+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="num" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="is_left" Type="boolean" DefaultValue="false" SyncDirection="All" />
+    <CodeBlockProperty Name="occupyable" Type="boolean" DefaultValue="true" SyncDirection="All" />
+    <CodeBlockProperty Name="time" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="left_in" Type="boolean" DefaultValue="false" SyncDirection="All" />
+    <CodeBlockProperty Name="right_in" Type="boolean" DefaultValue="false" SyncDirection="All" />
+    <CodeBlockProperty Name="left_list" Type="array" DefaultValue="Entity" SyncDirection="All" />
+    <CodeBlockProperty Name="right_list" Type="array" DefaultValue="Entity" SyncDirection="All" />
+    <CodeBlockProperty Name="sec" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="buildable" Type="boolean" DefaultValue="false" SyncDirection="All" />
+    <CodeBlockProperty Name="occupy_UI" Type="Entity" DefaultValue="58ba4661-4e63-4c4d-8519-2a844a126c82" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="LeftBuildThree" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="lv" Type="number" DefaultValue="0" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+local level = math.floor(lv)
+if(self.buildable == false) then return end
+self.buildable = false
+local parent = _EntityService:GetEntityByPath("/maps/map01")
+local build = _SpawnService:SpawnByModelId("model://d444ccc5-4275-4b45-a5a7-10e8270439d7","BoomFactory"..self.num,self:get_pos(),parent)
+build.Common:Change_MaxHP(tonumber(_DataService:GetCell("stat",5,lv+2)))
+build.Common.HP = build.Common.MaxHP
+local wall = _SpawnService:SpawnByModelId("model://23c20188-1930-439c-a176-7f3fd34d993b", "wall"..self.num,Vector3(0,0,0),build)
+wall.TransformComponent.Scale.x = wall.TransformComponent.Scale.x/build.TransformComponent.Scale.x
+wall.TransformComponent.Scale.y = wall.TransformComponent.Scale.y/build.TransformComponent.Scale.y
+self.num = self.num+1
+build.Building.occupy = self.Entity
+self.Entity.Enable = false
+self:clear()
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="LeftBuildOne" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="lv" Type="number" DefaultValue="0" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+local level = math.floor(lv)
+if(self.buildable == false) then return end
+self.buildable = false
+local parent = _EntityService:GetEntityByPath("/maps/map01")
+local build = _SpawnService:SpawnByModelId("model://0b775824-ddcc-4b49-a1fd-ab81fec43613","LineInfantry_Start"..self.num,self:get_pos(),parent)
+build.Common:Change_MaxHP(tonumber(_DataService:GetCell("stat",5,lv+2)))
+build.Common.HP = build.Common.MaxHP
+build.Turret.damage = tonumber(_DataService:GetCell("stat",6,lv+2))
+local wall = _SpawnService:SpawnByModelId("model://23c20188-1930-439c-a176-7f3fd34d993b", "wall"..self.num,Vector3(0,0,0),build)
+wall.TransformComponent.Scale.x = wall.TransformComponent.Scale.x/build.TransformComponent.Scale.x
+wall.TransformComponent.Scale.y = wall.TransformComponent.Scale.y/build.TransformComponent.Scale.y
+self.num = self.num+1
+build.Building.occupy = self.Entity
+self.Entity.Enable = false
+self:clear()
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="LeftBuildTwo" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="lv" Type="number" DefaultValue="0" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+local level = math.floor(lv)
+if(self.buildable == false) then return end
+self.buildable = false
+local parent = _EntityService:GetEntityByPath("/maps/map01")
+local build = _SpawnService:SpawnByModelId("model://7774ae1e-e479-4279-a04e-0daded58ca98", "HealingMachine"..self.num,self:get_pos(),parent)
+build.Common:Change_MaxHP(tonumber(_DataService:GetCell("stat",5,lv+2)))
+build.Common.HP = build.Common.MaxHP
+local heal = _SpawnService:SpawnByModelId("model://9f2af814-679e-4f5d-9a8e-4ff60b50fe9e", "HealingZone"..self.num,Vector3(0,-0.1,0),build)
+heal.TransformComponent.Scale.x = heal.TransformComponent.Scale.x/build.TransformComponent.Scale.x
+heal.TransformComponent.Scale.y = heal.TransformComponent.Scale.y/build.TransformComponent.Scale.y
+heal.HealComponent.is_left = true
+local wall = _SpawnService:SpawnByModelId("model://23c20188-1930-439c-a176-7f3fd34d993b", "wall"..self.num,Vector3(0,0,0),build)
+wall.TransformComponent.Scale.x = wall.TransformComponent.Scale.x/build.TransformComponent.Scale.x
+wall.TransformComponent.Scale.y = wall.TransformComponent.Scale.y/build.TransformComponent.Scale.y
+
+self.num = self.num+1
+build.Building.occupy = self.Entity
+self:clear()
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="RightBuildThree" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="lv" Type="number" DefaultValue="0" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+local level = math.floor(lv)
+if(self.buildable == false) then return end
+self.buildable = false
+local parent = _EntityService:GetEntityByPath("/maps/map01")
+local build = _SpawnService:SpawnByModelId("model://ba101376-57cc-4486-aca1-05d1c8de7953","AndroidFactory"..self.num,self:get_pos(),parent)
+build.Common:Change_MaxHP(tonumber(_DataService:GetCell("stat",5,lv+2)))
+build.Common.HP = build.Common.MaxHP
+local wall = _SpawnService:SpawnByModelId("model://38d45c28-6d5a-4725-ad1d-9bc3be5b0ba4", "wall"..self.num,Vector3(0,0,0),build)
+wall.TransformComponent.Scale.x = wall.TransformComponent.Scale.x/build.TransformComponent.Scale.x
+wall.TransformComponent.Scale.y = wall.TransformComponent.Scale.y/build.TransformComponent.Scale.y
+self.num = self.num+1
+build.Building.occupy = self.Entity
+self.Entity.Enable = false
+self:clear()
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="RightBuildOne" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="lv" Type="number" DefaultValue="0" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+local level = math.floor(lv)
+if(self.buildable == false) then return end
+self.buildable = false
+local parent = _EntityService:GetEntityByPath("/maps/map01")
+local build = _SpawnService:SpawnByModelId("model://2f9030db-cf28-4fae-b84a-c82eec1a398a","RaserArea"..self.num,self:get_pos(),parent)
+build.Common:Change_MaxHP(tonumber(_DataService:GetCell("stat",5,lv+2)))
+build.Common.HP = build.Common.MaxHP
+build.Turret.damage = tonumber(_DataService:GetCell("stat",6,lv+2))
+local wall = _SpawnService:SpawnByModelId("model://38d45c28-6d5a-4725-ad1d-9bc3be5b0ba4", "wall"..self.num,Vector3(0,0,0),build)
+wall.TransformComponent.Scale.x = wall.TransformComponent.Scale.x/build.TransformComponent.Scale.x
+wall.TransformComponent.Scale.y = wall.TransformComponent.Scale.y/build.TransformComponent.Scale.y
+self.num = self.num+1
+build.Building.occupy = self.Entity
+self.Entity.Enable = false
+self:clear()
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="RightBuildTwo" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="lv" Type="number" DefaultValue="0" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+local level = math.floor(lv)
+if(self.buildable == false) then return end
+self.buildable = false
+local parent = _EntityService:GetEntityByPath("/maps/map01")
+local build = _SpawnService:SpawnByModelId("model://e0252c65-f24c-43e9-b74f-afcdd54b1e14","EnergySupply"..self.num,self:get_pos(),parent)
+build.Common:Change_MaxHP(tonumber(_DataService:GetCell("stat",5,lv+2)))
+build.Common.HP = build.Common.MaxHP
+local heal = _SpawnService:SpawnByModelId("model://9f2af814-679e-4f5d-9a8e-4ff60b50fe9e", "HealingZone"..self.num,Vector3(0,0,0),build)
+heal.TransformComponent.Scale.x = heal.TransformComponent.Scale.x/build.TransformComponent.Scale.x
+heal.TransformComponent.Scale.y = heal.TransformComponent.Scale.y/build.TransformComponent.Scale.y
+heal.HealComponent.is_left = false
+local wall = _SpawnService:SpawnByModelId("model://38d45c28-6d5a-4725-ad1d-9bc3be5b0ba4", "wall"..self.num,Vector3(0,0,0),build)
+wall.TransformComponent.Scale.x = wall.TransformComponent.Scale.x/build.TransformComponent.Scale.x
+wall.TransformComponent.Scale.y = wall.TransformComponent.Scale.y/build.TransformComponent.Scale.y
+self.num = self.num+1
+build.Building.occupy = self.Entity
+self.Entity.Enable = false
+self:clear()
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnUpdate" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="delta" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+
+--if(self.occupyable == false) then return end
+local before = math.floor(self.time)
+if(self.left_in == true and self.right_in == false) then
+	self.time = self.time - delta
+elseif(self.left_in == false and self.right_in == true) then
+	self.time = self.time + delta
+elseif(self.left_in == false and self.right_in == false)then
+	if(self.time > 0.1 or self.time < -0.1)then
+		self.time = self.time - delta*(math.abs(self.time)/self.time)
+	end
+end
+local tem = math.floor(self.time)
+if(tem == -6) then
+	self.time = -5.01
+elseif(tem == 5) then
+	self.time = 5.01
+end
+if(before ~= tem)then
+	if(tem < 0) then
+		tem = tem + 1
+	end
+	if(tem == -5) then
+		self.is_left = true
+		--self.occupyable = false
+		self.buildable = true
+		self.Entity.BasicParticleComponent.Color = Color.yellow
+		--table.clear(self.right_list)
+		for key, value in pairs(self.left_list) do
+			value.PlayerTimer:UI_off()
+			value.PlayerBuilding:build_UI_on(value)
+			value.StatComponent:GetEXP(15)
+			value.PlayerBuilding:occupy_UI_on()
+			self:put_E(value)
+		end
+		--table.clear(self.left_list)
+	elseif(tem == 5)then
+		self.is_left = false
+		--self.occupyable = false
+		self.buildable = true
+		self.Entity.BasicParticleComponent.Color = Color.red
+		--table.clear(self.left_list)
+		for key, value in pairs(self.right_list) do
+			value.PlayerTimer:UI_off()
+			value.PlayerBuilding:build_UI_on(value)
+			value.StatComponent:GetEXP(15)
+			value.PlayerBuilding:occupy_UI_on()
+			self:put_E(value)
+		end
+		--table.clear(self.right_list)
+	else
+		self.sec = tem
+		self:update_time()
+	end
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="remove" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="list" Type="array" DefaultValue="string" SyncDirection="None" />
+        <CodeBlockProperty Name="n" Type="Entity" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+for id = #list, 1, -1 do
+	if(list[id] == n) then
+		table.remove(list,id)
+	end
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="update_time" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+for key, value in pairs(self.left_list) do
+	value.PlayerTimer:SetTime(self.sec)
+end
+for key, value in pairs(self.right_list) do
+	value.PlayerTimer:SetTime(self.sec)
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="put_E" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="value" Type="Entity" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+value.PlayerBuilding.E = self.Entity
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="get_pos" ExecSpace="All">
+      <Return Type="Vector3" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+local ret = Vector3.zero
+local pos = self.Entity.TransformComponent.Position
+ret.x = pos.x
+ret.y = pos.y
+return ret
+
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="clear" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+
+self.buildable = false
+self.left_in = false
+--self.occupyable = true
+self.right_in = false
+self.sec = 0
+self.time = 0
+self.Entity.Enable = false
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="in_L" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="E" Type="Entity" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+table.insert(self.left_list,E)
+self.left_in = true
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="in_R" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="E" Type="Entity" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+table.insert(self.right_list,E)
+self.right_in = true
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="out_L" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="E" Type="Entity" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+self:remove(self.left_list,E)
+if(#self.left_list == 0) then
+	self.left_in = false
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="out_R" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="E" Type="Entity" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+self:remove(self.right_list,E)
+if(#self.right_list == 0) then
+	self.right_in = false
+end
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleTriggerEnterEvent" EventName="TriggerEnterEvent" Target="self" Scope="Client">
+      <Code><![CDATA[
+-- Parameters
+local TriggerBodyEntity = event.TriggerBodyEntity
+--------------------------------------------------------
+if(TriggerBodyEntity ~= _UserService.LocalPlayer) then return end
+
+--if (self.occupyable)then
+	TriggerBodyEntity.PlayerTimer:UI_on()
+	TriggerBodyEntity.PlayerTimer:SetTime(self.sec)
+	if(TriggerBodyEntity.Common.is_left) then
+		self:in_L(TriggerBodyEntity)
+	else
+		self:in_R(TriggerBodyEntity)
+	end
+--elseif(self.buildable)then
+if(self.buildable)then
+	if(self.is_left == TriggerBodyEntity.Common.is_left) then
+		TriggerBodyEntity.PlayerBuilding:build_UI_on(TriggerBodyEntity)
+		self:put_E(TriggerBodyEntity)
+	end
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleTriggerLeaveEvent" EventName="TriggerLeaveEvent" Target="self" Scope="Client">
+      <Code><![CDATA[
+-- Parameters
+local TriggerBodyEntity = event.TriggerBodyEntity
+--------------------------------------------------------
+if(TriggerBodyEntity ~= _UserService.LocalPlayer) then return end
+TriggerBodyEntity.PlayerTimer:UI_off()
+--if (self.occupyable)then
+
+	if(TriggerBodyEntity.Common.is_left) then
+		self:out_L(TriggerBodyEntity)
+	else
+		self:out_R(TriggerBodyEntity)
+	end
+--else
+if(self.buildable) then
+	TriggerBodyEntity.PlayerBuilding:build_UI_off(TriggerBodyEntity)
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
