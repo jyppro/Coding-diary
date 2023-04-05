@@ -1,0 +1,304 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="bb1af60d-d19c-44b2-8b15-e17276e8abcd" Language="Lua" Name="Common" Type="Component" Source="None" ModifyTime="2022-11-27T20:54:28.6207408+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="is_left" Type="boolean" DefaultValue="true" SyncDirection="All" />
+    <CodeBlockProperty Name="HP" Type="number" DefaultValue="1000" SyncDirection="All" />
+    <CodeBlockProperty Name="is_monster" Type="boolean" DefaultValue="false" SyncDirection="All" />
+    <CodeBlockProperty Name="is_player" Type="boolean" DefaultValue="false" SyncDirection="All" />
+    <CodeBlockProperty Name="is_build" Type="boolean" DefaultValue="false" SyncDirection="All" />
+    <CodeBlockProperty Name="MaxHP" Type="number" DefaultValue="1000" SyncDirection="All" />
+    <CodeBlockProperty Name="is_map" Type="boolean" DefaultValue="false" SyncDirection="All" />
+    <CodeBlockProperty Name="timer_grass" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="timer_fire" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="timer_water" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="is_grassed" Type="boolean" DefaultValue="false" SyncDirection="All" />
+    <CodeBlockProperty Name="is_fired" Type="boolean" DefaultValue="false" SyncDirection="All" />
+    <CodeBlockProperty Name="is_watered" Type="boolean" DefaultValue="false" SyncDirection="All" />
+    <CodeBlockProperty Name="fire_dot" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="respon_time" Type="number" DefaultValue="4" SyncDirection="All" />
+    <CodeBlockProperty Name="EXP" Type="number" DefaultValue="50" SyncDirection="All" />
+    <CodeBlockProperty Name="is_neutral" Type="boolean" DefaultValue="false" SyncDirection="All" />
+    <CodeBlockProperty Name="leaf" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="ice" Type="Entity" DefaultValue="nil" SyncDirection="All" />
+    <CodeBlockProperty Name="systen" Type="Entity" DefaultValue="d7c43fb2-cea0-461f-805e-1b0da82d5049" SyncDirection="All" />
+    <CodeBlockProperty Name="fire_Entity" Type="Entity" DefaultValue="nil" SyncDirection="All" />
+    <CodeBlockProperty Name="last_hit" Type="Entity" DefaultValue="nil" SyncDirection="All" />
+    <CodeBlockProperty Name="fever" Type="boolean" DefaultValue="false" SyncDirection="All" />
+    <CodeBlockProperty Name="darkness" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+self.HP = self.MaxHP
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="dead" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+local dead = function() self.Entity:Destroy() end
+local revive = function() 
+	self.Entity.PlayerAttack:close_UI()
+	self.Entity.StateComponent:ChangeState("IDLE")
+	self.HP = self.MaxHP
+	self:canmove_S()
+end
+
+if(self.Entity.Common.is_build and self.Entity.Common.is_neutral == false)then
+	for k, v in pairs(_UserService.UserEntities) do
+		if(v.Common.is_left ~= self.Entity.Common.is_left)then
+			v.StatComponent:GetEXP(10)
+		end
+	end
+end
+
+if(self.Entity.Common.is_player)then
+	self.Entity.PlayerAttack:change_property()
+	_TimerService:SetTimerOnce(revive,self.respon_time)
+	self.Entity.StateComponent:ChangeState("DEAD")
+	if(self.is_grassed) then
+		_TimerService:ClearTimer(self.timer_grass)
+	end
+	if(self.is_fired) then
+		_TimerService:ClearTimer(self.timer_fire)
+		_TimerService:ClearTimer(self.fire_dot)
+	end
+	if(self.is_watered) then
+		_TimerService:ClearTimer(self.timer_water)
+	end
+	if self.Entity.Common.is_left == true then
+		self.Entity.MovementComponent:SetPosition(Vector2(-57, 10))
+	elseif self.Entity.Common.is_left == false then
+		self.Entity.MovementComponent:SetPosition(Vector2(30, 10))
+	end
+	self:unmove()
+	for k, v in pairs(_UserService.UserEntities) do
+		if(v.Common.is_left ~= self.Entity.Common.is_left)then
+			v.StatComponent:GetEXP(25)
+		end
+	end
+else
+	_TimerService:SetTimerOnce(dead,0.25)
+end
+
+
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="get_grassed" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+if(self.Entity.Common.is_player == false) then return end
+if(self.is_grassed) then
+	_TimerService:ClearTimer(self.timer_grass)
+else
+	self.leaf = _SpawnService:SpawnByModelId("model://351d6312-cb49-4815-9f49-d9be6209dffc","Leaf",Vector3(0,1,0),self.Entity)
+	self.darkness = _SpawnService:SpawnByModelId("model://e96b6c05-b536-4240-89b1-80615952bf48","Darkness",Vector3(0,1,0),self.Entity)
+	if(self.Entity ~= _UserService.LocalPlayer) then
+		self.leaf.Visible = false
+		_SpawnService:SpawnByModelId("model://ed55892c-1b77-479f-9772-5ce13fedf965","DarkEff",Vector3.zero,self.Entity)
+	end
+end
+local callback = function()
+	self.leaf:Destroy()
+	self.darkness:Destroy()
+	self.is_grassed = false
+end
+self.is_grassed = true
+self.timer_grass = _TimerService:SetTimerOnce(callback,6)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="get_fired" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="attacker" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+local dot = function()
+	self:dot_damage(attacker.PlayerAttack.offense_power/10)
+	self.last_hit = attacker 
+end
+if(self.is_fired) then
+	_TimerService:ClearTimer(self.timer_fire)
+else
+	self.fire_dot = _TimerService:SetTimerRepeat(dot,0.7)
+end
+local callback = function() 
+	_TimerService:ClearTimer(self.fire_dot)
+	self.is_fired = false
+end
+self.is_fired = true
+self.timer_fire = _TimerService:SetTimerOnce(callback,7)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="get_watered" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+--if(self.Entity ~= _UserService.LocalPlayer) then return end
+--if(self.Entity.MovementComponent == nil) then return end
+if(self.is_watered) then
+	_TimerService:ClearTimer(self.timer_water)
+else
+	if(self.Entity.Common.is_player and self.Entity == _UserService.LocalPlayer) then
+		self:unmove_S()
+	elseif(self.Entity.Common.is_monster) then
+		self:unmove_mon_S()
+	end
+end
+
+local callback = function() 
+	self:canmove_S()
+	self.is_watered = false
+end
+local callback_mon = function() 
+	self:canmove_mon_S()
+	self.is_watered = false
+end
+
+self.is_watered = true
+if(self.Entity.Common.is_player and self.Entity == _UserService.LocalPlayer) then
+	self.timer_water = _TimerService:SetTimerOnce(callback,1.5)
+elseif(self.Entity.Common.is_monster) then
+	self.timer_water = _TimerService:SetTimerOnce(callback_mon,1.5)
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="dot_damage" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="damage" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if self:IsClient() then return end
+if(self.HP > 0) then
+	self.HP = self.HP - damage
+	_DamageSkinService:Play(self.Entity,"3934e7ae11514b47b7b04dac913e2715",0,{damage},DamageSkinTweenType.Default,false)
+	if(self.HP <= 0) then
+		self:dead()
+		if(self.last_hit.Common.is_player) then
+			self.last_hit.StatComponent:GetEXP(self.EXP)	
+		end
+	end
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="Change_MaxHP" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="hp" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+self.MaxHP = hp
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="unmove" ExecSpace="Multicast">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+self.Entity.PlayerControllerappend.Enable = false
+self.Entity.DoubleJump.Enable = false
+self.Entity.RigidbodyComponent.Enable = false
+self.Entity.SkillComponent.casting = true
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="canmove" ExecSpace="Multicast">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+self.Entity.PlayerControllerappend.Enable = true
+self.Entity.DoubleJump.Enable = true
+self.Entity.RigidbodyComponent.Enable = true
+self.Entity.SkillComponent.casting = false
+self.Entity.SkillComponent:casting_bar_remove()
+if(self.ice ~= nil) then
+	self.ice:Destroy()
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="unmove_mon" ExecSpace="Multicast">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+self.Entity.MovementComponent.Enable = false
+if(self.Entity.AIWanderComponent ~= nil) then
+	self.Entity.AIWanderComponent.Enable = false
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="canmove_mon" ExecSpace="Multicast">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+self.Entity.MovementComponent.Enable = true
+if(self.Entity.AIWanderComponent ~= nil) then
+	self.Entity.AIWanderComponent.Enable = true
+end
+self.ice:Destroy()
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="unmove_S" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+self:unmove()
+self.ice = _SpawnService:SpawnByModelId("model://1c2c4ee6-2889-47cf-8d25-8cb34d922f8b","Ice",Vector3.zero,self.Entity)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="canmove_S" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+self:canmove()
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="unmove_mon_S" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+self:unmove_mon()
+self.ice = _SpawnService:SpawnByModelId("model://1c2c4ee6-2889-47cf-8d25-8cb34d922f8b","Ice",Vector3.zero,self.Entity)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="canmove_mon_S" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+self:canmove_mon()
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleHitEvent" EventName="HitEvent" Target="self" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local AttackCenter = event.AttackCenter
+local AttackerEntity = event.AttackerEntity
+local Damages = event.Damages
+local Extra = event.Extra
+local FeedbackAction = event.FeedbackAction
+local IsCritical = event.IsCritical
+local TotalDamage = event.TotalDamage
+--------------------------------------------------------
+if self:IsClient() then return end
+if(self.HP > 0) then
+	self.HP = self.HP - TotalDamage
+	self.last_hit = AttackerEntity
+	if(self.HP <= 0) then
+		if(self.last_hit.Common.is_player) then
+			self.last_hit.StatComponent:GetEXP(self.EXP)	
+			--log(self.systen.PlayerDataComponent.User_Property[self.last_hit])
+		end
+		self:dead()
+	end
+end
+
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
