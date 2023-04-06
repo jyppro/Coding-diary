@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="7adc17f8-11d2-4bfe-87fc-546b579b2f0f" Language="Lua" Name="DoubleJump" Type="Component" Source="None" ModifyTime="2022-11-26T21:26:13.7485481+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="doublejumpable" Type="boolean" DefaultValue="false" SyncDirection="All" />
+    <CodeBlockProperty Name="leave_ground" Type="boolean" DefaultValue="false" SyncDirection="All" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="DoubleJump" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+local rigidbody = self.Entity.RigidbodyComponent
+local controller = self.Entity.PlayerControllerappend
+
+if controller.LookDirectionX > 0 then
+	rigidbody:SetForce(Vector2(6,6))
+else
+	rigidbody:SetForce(Vector2(-6,6))
+end
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleKeyDownEvent" EventName="KeyDownEvent" Target="service:InputService" Scope="Client">
+      <Code><![CDATA[
+-- Parameters
+local key = event.key
+--------------------------------------------------------
+if (key == KeyboardKey.LeftAlt) then
+	if(self.leave_ground == false) then
+		self.leave_ground = true
+	elseif(self.doublejumpable) then
+		self.doublejumpable = false
+		self:DoubleJump()
+	end
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleFootholdEnterEvent" EventName="FootholdEnterEvent" Target="self" Scope="Client">
+      <Code><![CDATA[
+-- Parameters
+local Entity = event.Entity
+local Foothold = event.Foothold
+--------------------------------------------------------
+if(Entity ~= _UserService.LocalPlayer) then return end
+self.leave_ground = false
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleFootholdLeaveEvent" EventName="FootholdLeaveEvent" Target="self" Scope="Client">
+      <Code><![CDATA[
+-- Parameters
+local Entity = event.Entity
+local Foothold = event.Foothold
+--------------------------------------------------------
+if(Entity ~= _UserService.LocalPlayer) then return end
+self.doublejumpable = true
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
