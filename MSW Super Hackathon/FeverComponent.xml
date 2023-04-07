@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="c4067770-6706-4bca-a286-c7e7908d3dd0" Language="Lua" Name="FeverComponent" Type="Component" Source="None" ModifyTime="2022-11-27T22:42:43.4719057+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="dead_num" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="Gage1" Type="Entity" DefaultValue="4a27f55b-5dae-4773-8e88-1fda0fb284d6" SyncDirection="None" />
+    <CodeBlockProperty Name="Gage2" Type="Entity" DefaultValue="6545bd87-7f3f-4bed-8520-2a50be171958" SyncDirection="None" />
+    <CodeBlockProperty Name="Gage3" Type="Entity" DefaultValue="bd5c446e-33eb-4220-b76e-21177382f25f" SyncDirection="None" />
+    <CodeBlockProperty Name="Gage4" Type="Entity" DefaultValue="27a44a44-08bb-4ffb-8555-322e22bc59ab" SyncDirection="None" />
+    <CodeBlockProperty Name="Gage5" Type="Entity" DefaultValue="cf23335f-ad52-42fe-877e-8aa7a44287d4" SyncDirection="None" />
+    <CodeBlockProperty Name="fever_able" Type="boolean" DefaultValue="false" SyncDirection="All" />
+    <CodeBlockProperty Name="Fever" Type="Entity" DefaultValue="444a2cb3-d858-4c14-9f23-1dec9bdea98f" SyncDirection="None" />
+    <CodeBlockProperty Name="V" Type="Entity" DefaultValue="4d46ca22-b31a-4623-84ec-da317737d6cb" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="feverUI_Control" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="num" Type="number" DefaultValue="0" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if(self.Entity ~= _UserService.LocalPlayer) then return end
+local int = math.floor(num)
+if int == 0 then
+	self.Gage1.SpriteGUIRendererComponent.Color = Color.red
+elseif int == 1 then
+	self.Gage2.SpriteGUIRendererComponent.Color = Color.red
+elseif int == 2 then
+	self.Gage3.SpriteGUIRendererComponent.Color = Color.red
+elseif int == 3 then
+	self.Gage4.SpriteGUIRendererComponent.Color = Color.red
+elseif int == 4 then
+	self.Gage5.SpriteGUIRendererComponent.Color = Color.red
+	self.Fever.Enable = true
+	self.V.Enable = true
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="feverUI_End" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+if(self.Entity ~= _UserService.LocalPlayer) then return end
+self.Gage1.SpriteGUIRendererComponent.Color = Color.white
+self.Gage2.SpriteGUIRendererComponent.Color = Color.white
+self.Gage3.SpriteGUIRendererComponent.Color = Color.white
+self.Gage4.SpriteGUIRendererComponent.Color = Color.white
+self.Gage5.SpriteGUIRendererComponent.Color = Color.white
+self.Fever.Enable = false
+self.V.Enable = false
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleDeadEvent" EventName="DeadEvent" Target="self" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+--------------------------------------------------------
+self:feverUI_Control(self.dead_num)
+self.dead_num = self.dead_num + 1
+if(self.dead_num > 4.9) then
+	self.fever_able = true
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
