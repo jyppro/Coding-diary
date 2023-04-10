@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="36f738a5-1c2c-43af-94b9-2bb92255915d" Language="Lua" Name="GameManager" Type="Component" Source="None" ModifyTime="2022-11-27T22:43:27.7963121+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="roomIdx" Type="number" DefaultValue="0" SyncDirection="None" />
+    <CodeBlockProperty Name="time" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="playerNumPerGame" Type="number" DefaultValue="4" SyncDirection="None" />
+    <CodeBlockProperty Name="TimeUI" Type="Entity" DefaultValue="310aba42-3851-4bc4-a242-c731e5747748" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="OnUpdate" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="delta" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+self.time = self.time + delta
+self:TimeCheck()
+if self.time >= 10.0 then
+	self.time = 0.0
+	
+	local PlayerNum = 0
+	local PlayerList = {}
+	for k, v in pairs(_UserService.UserEntities) do
+		if v.Player.isReady == true  then
+			PlayerNum = PlayerNum + 1
+			PlayerList[#PlayerList+1] = v.Name
+		end
+	end
+	
+	if PlayerNum >= math.floor(self.playerNumPerGame) then
+		for i = 1, math.floor(PlayerNum / self.playerNumPerGame) do
+			local instanceMap = self:GetOrCreateInstanceMap()
+			local toSendPlayers = {}
+			for j = 1, self.playerNumPerGame do
+                local idx = (i-1) * self.playerNumPerGame + j
+                toSendPlayers[#toSendPlayers+1] = PlayerList[idx]
+            end
+			_InstanceMapService:MoveUsersToInstanceMap(instanceMap.InstanceKey, toSendPlayers)
+		end
+	end
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="GetOrCreateInstanceMap" ExecSpace="All">
+      <Return Type="any" DefaultValue="nil" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="arg1" Type="string" DefaultValue="&quot;&quot;" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+-- InstanceMapService를 이용해 Instance Map을 생성하고 roomIdx를 1 올려줍니다.
+-- roomIdx를 Instance Map 을 만드는 키로 사용해 매번 새로운 Instance Map이 만들어지게 합니다.
+local instanceMap = _InstanceMapService:GetOrCreateInstanceMap("map01"..tostring(self.roomIdx))
+self.roomIdx = self.roomIdx + 1
+return instanceMap
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="TimeCheck" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.TimeUI.TextComponent.Text = string.format("10초가 되면 시작합니다 : %d",self.time)
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>
