@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="bc32af9d-5d80-4dad-aea1-36ad2beaf458" Language="Lua" Name="HealComponent" Type="Component" Source="None" ModifyTime="2022-11-27T03:12:24.4846707+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="IsGettingHealed" Type="boolean" DefaultValue="false" SyncDirection="None" />
+    <CodeBlockProperty Name="timerId" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="healPower" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="healTable" Type="table" DefaultValue="{}" SyncDirection="None" />
+    <CodeBlockProperty Name="is_left" Type="boolean" DefaultValue="true" SyncDirection="All" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="heal" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+if self.healTable[1] ~= nil then -- 힐테이블이 비어있지 않다면 실행
+	for key,value in pairs (self.healTable) do
+		if value.Common.HP < value.Common.MaxHP then -- 체력이 최대체력보다 낮을 때
+			value.Common.HP = value.Common.HP + self.healPower -- 체력회복
+			if value.Common.HP > value.Common.MaxHP then -- 최대체력보다 체력이 높아지면
+				value.Common.HP = value.Common.MaxHP -- 최대체력으로 만들기
+			end
+			local parent = _EntityService:GetEntityByPath("/maps/map01")
+			local Xpos = value.TransformComponent.Position.x
+			local Ypos = value.TransformComponent.Position.y
+			local spawn = _SpawnService:SpawnByModelId("model://e769c1f8-c00c-4eef-9112-34f5e72ceac8","HealEffect",Vector3(Xpos,Ypos,0),parent) -- 이펙트 발생
+			spawn:Destroy(1) -- 1초 뒤 이펙트 삭제
+		end
+	end
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="remove" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="healTable" Type="table" SyncDirection="None" />
+        <CodeBlockProperty Name="n" Type="Entity" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+for id = #healTable, 1, -1 do
+	if(healTable[id] == n) then
+		table.remove(healTable,id)
+	end
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+_TimerService:SetTimerRepeat(function() self:heal() end,1)
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleTriggerEnterEvent" EventName="TriggerEnterEvent" Target="self" Scope="Server">
+      <Code><![CDATA[
+-- Parameters
+local TriggerBodyEntity = event.TriggerBodyEntity
+--------------------------------------------------------
+if TriggerBodyEntity.Common.is_left == self.is_left then -- 같은 팀이면
+	table.insert(self.healTable,TriggerBodyEntity) -- 힐테이블에 들어온 엔티티 넣기
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleTriggerLeaveEvent" EventName="TriggerLeaveEvent" Target="self" Scope="Server">
+      <Code><![CDATA[
+-- Parameters
+local TriggerBodyEntity = event.TriggerBodyEntity
+--------------------------------------------------------
+if TriggerBodyEntity.Common.is_left == self.is_left then -- 나간 놈도 같은팀이면
+	self:remove(self.healTable,TriggerBodyEntity) -- 힐테이블에서 엔티티 제거
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleEntityDestroyEvent" EventName="EntityDestroyEvent" Target="service:EntityService" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local Entity = event.Entity
+--------------------------------------------------------
+if(Entity.Common == nil) then return end
+if Entity.Common.is_left == self.is_left then -- 나간 놈도 같은팀이면
+	self:remove(self.healTable,Entity) -- 힐테이블에서 엔티티 제거
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
