@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="a352da03-c248-495c-9a09-b27d53127fce" Language="Lua" Name="HpBar" Type="Component" Source="None" ModifyTime="2022-11-27T22:43:53.5169118+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="Xpos" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="Ypos" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="hpText" Type="Component" DefaultValue=":TextComponent" SyncDirection="All" />
+    <CodeBlockProperty Name="hpBar" Type="Component" DefaultValue=":UITransformComponent" SyncDirection="All" />
+    <CodeBlockProperty Name="maxWidth_HP" Type="number" DefaultValue="0" SyncDirection="All" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+local currentPath = self.Entity.Path
+self.hpText = _EntityService:GetEntityByPath(currentPath .. "/Hp/text_value").TextComponent -- 체력바 구성
+self.hpBar = _EntityService:GetEntityByPath(currentPath .. "/Hp/img_bar").UITransformComponent
+self.maxWidth_HP = self.hpBar.RectSize.x
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnUpdate" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="delta" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if self.hpBar ~= nil then -- 체력 깎이고 회복하는 UI
+	local hp = self.Entity.Common.HP
+	local maxhp = self.Entity.Common.MaxHP
+	self.hpBar.RectSize = Vector2(hp / maxhp * self.maxWidth_HP,self.hpBar.RectSize.y)
+	self.hpText.Text = string.format("%d / %d", hp,maxhp)
+end
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>
