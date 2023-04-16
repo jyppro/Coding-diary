@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="57781f46-1d49-45d3-82bb-5d5cf19dd536" Language="Lua" Name="InstanceGameManager" Type="Component" Source="None" ModifyTime="2022-11-21T23:43:08.7503296+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties />
+  <Methods>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+local playFunc = function()
+	local users ={}
+	-- 현재 맵에 존재하는 플레이어들을 가져옵니다.
+	for k, v in pairs(_UserService.UserEntities) do
+		users[#users+1] = v.Name
+	end
+	-- 해당 플레이어들을 부모 맵으로 돌려보냅니다.
+	_InstanceMapService:MoveUsersToParentMap(users)
+end
+
+-- 게임이 시작되고 180초가 지난 후, PlayFunc 함수가 실행되도록 합니다.
+_TimerService:SetTimerOnce(playFunc, 1800000.0)
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>
