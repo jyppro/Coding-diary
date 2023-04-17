@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="3844b48d-6fe4-414c-8d3c-17a642ce42e5" Language="Lua" Name="KillLogComponent" Type="Component" Source="None" ModifyTime="2022-11-25T02:07:14.2703202+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="Kill_Log" Type="Entity" DefaultValue="314b71ce-686d-4e68-96a7-0e1024646d72" SyncDirection="None" />
+  </Properties>
+  <Methods />
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleDeadEvent" EventName="DeadEvent" Target="self" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+--------------------------------------------------------
+if isvalid(self.Entity) == false then end
+self.Kill_Log.Enable = true
+self.Kill_Log.TextComponent.Text = string.format("%s 님이 처치되었습니다!",self.Entity.PlayerComponent.Nickname)
+wait(2)
+self.Kill_Log.Enable = false
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
