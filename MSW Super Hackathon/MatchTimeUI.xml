@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="62299975-566b-4be2-8aff-19476174f4d8" Language="Lua" Name="MatchTimeUI" Type="Component" Source="None" ModifyTime="2022-11-27T05:35:33.4740624+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="GM" Type="Component" DefaultValue=":GameManager" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="Time" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.Entity.TextComponent.Text = string.format("%d",self.GM.time)
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>
