@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="fba1e41d-17f8-4733-9403-429c27e7e5b1" Language="Lua" Name="MonsterControlConpoment_L" Type="Component" Source="None" ModifyTime="2022-11-28T00:20:29.9200881+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="is_coll" Type="boolean" DefaultValue="false" SyncDirection="All" />
+    <CodeBlockProperty Name="speed" Type="number" DefaultValue="1" SyncDirection="All" />
+    <CodeBlockProperty Name="Team_List" Type="array" DefaultValue="string" SyncDirection="All" />
+    <CodeBlockProperty Name="Enemy_List" Type="array" DefaultValue="string" SyncDirection="All" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="OnUpdate" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="delta" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if(self.is_coll == false) then
+	self.Entity.MovementComponent:MoveToDirection(Vector2(1,0),3)
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="remove" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="Coll_list" Type="array" DefaultValue="string" SyncDirection="None" />
+        <CodeBlockProperty Name="n" Type="string" DefaultValue="&quot;&quot;" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+for id = #Coll_list, 1, -1 do
+	if(Coll_list[id] == n) then
+		table.remove(Coll_list,id)
+	end
+end
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleTriggerEnterEvent" EventName="TriggerEnterEvent" Target="self" Scope="Server">
+      <Code><![CDATA[
+-- Parameters
+local TriggerBodyEntity = event.TriggerBodyEntity
+--------------------------------------------------------
+if(TriggerBodyEntity.Common == nil) then return end
+if(TriggerBodyEntity.Common.is_neutral == true and TriggerBodyEntity.Common.is_monster) then 
+	return 
+end
+
+if(TriggerBodyEntity.Common.is_left ~= self.Entity.Common.is_left) then
+	--부딫친게 적이거나 아군 몬스터중 앞에 있는 애면 밑의 코드 실행
+	table.insert(self.Enemy_List,TriggerBodyEntity.Name)
+	self.is_coll = true
+	self.Entity.MovementComponent:Stop()
+elseif(TriggerBodyEntity.Common.is_monster and (TriggerBodyEntity.TransformComponent.Position.x > self.Entity.TransformComponent.Position.x))then
+	table.insert(self.Team_List,TriggerBodyEntity.Name)
+	self.is_coll = true
+	self.Entity.MovementComponent:Stop()
+elseif(TriggerBodyEntity.Common.is_neutral == true and TriggerBodyEntity.Common.is_build) then
+	table.insert(self.Enemy_List,TriggerBodyEntity.Name)
+	self.is_coll = true
+	self.Entity.MovementComponent:Stop()
+end
+
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleTriggerLeaveEvent" EventName="TriggerLeaveEvent" Target="self" Scope="Server">
+      <Code><![CDATA[
+-- Parameters
+local TriggerBodyEntity = event.TriggerBodyEntity
+--------------------------------------------------------
+if(TriggerBodyEntity.Common == nil) then return end
+if(TriggerBodyEntity.Common.is_neutral == true and TriggerBodyEntity.Common.is_monster) then 
+	return 
+end
+if(TriggerBodyEntity.Common.is_left ~= self.Entity.Common.is_left ) then
+	self:remove(self.Enemy_List,TriggerBodyEntity.Name)
+elseif (TriggerBodyEntity.Common.is_monster and (TriggerBodyEntity.TransformComponent.Position.x > self.Entity.TransformComponent.Position.x)) then
+	self:remove(self.Team_List,TriggerBodyEntity.Name)
+elseif(TriggerBodyEntity.Common.is_neutral == true and TriggerBodyEntity.Common.is_build) then
+	self:remove(self.Enemy_List,TriggerBodyEntity.Name)
+end
+if(#self.Enemy_List == 0 ) then
+	if(#self.Team_List == 0)then
+		self.is_coll = false
+	end
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleEntityDestroyEvent" EventName="EntityDestroyEvent" Target="service:EntityService" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local Entity = event.Entity
+--------------------------------------------------------
+local c = Entity.Common
+if(c == nil) then return end
+if(c.is_neutral == true and Entity.Common.is_monster) then return end
+if(Entity.Common.is_left ~= self.Entity.Common.is_left) then
+	self:remove(self.Enemy_List,Entity.Name)
+elseif (Entity.Common.is_monster and (Entity.TransformComponent.Position.x > self.Entity.TransformComponent.Position.x)) then
+	self:remove(self.Team_List,Entity.Name)
+elseif(Entity.Common.is_neutral == true and Entity.Common.is_build) then
+	self:remove(self.Enemy_List,Entity.Name)
+end
+if(#self.Enemy_List == 0 ) then
+	if(#self.Team_List == 0)then
+		self.is_coll = false
+	end
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
