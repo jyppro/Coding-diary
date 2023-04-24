@@ -1,0 +1,313 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="16150a8f-23e4-4f96-8e42-3099531ef363" Language="Lua" Name="MonsterSponConpoment_L" Type="Component" Source="None" ModifyTime="2022-11-27T19:53:22.9183806+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="is_Near" Type="boolean" DefaultValue="false" SyncDirection="All" />
+    <CodeBlockProperty Name="is_left" Type="boolean" DefaultValue="true" SyncDirection="All" />
+    <CodeBlockProperty Name="num" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="SummonUI" Type="Entity" DefaultValue="e24fd79e-cdf6-4ea2-bb80-d0f2611100cf" SyncDirection="None" />
+    <CodeBlockProperty Name="mon_0_L" Type="string" DefaultValue="&quot;model://e9c3805b-07a3-498d-a63f-41719404ce0d&quot;" SyncDirection="None" />
+    <CodeBlockProperty Name="mon_1_L" Type="string" DefaultValue="&quot;model://b08172ec-5954-4756-8e01-235360c99a00&quot;" SyncDirection="None" />
+    <CodeBlockProperty Name="mon_2_L" Type="string" DefaultValue="&quot;model://2682c06a-f2ba-4ccb-b09c-d85b3fe42080&quot;" SyncDirection="None" />
+    <CodeBlockProperty Name="mon_3_L" Type="string" DefaultValue="&quot;model://eacbb839-3702-439f-b18e-6a138a44d576&quot;" SyncDirection="None" />
+    <CodeBlockProperty Name="mon_0_R" Type="string" DefaultValue="&quot;model://af9390f3-d20d-4a4a-b364-0087c5932438&quot;" SyncDirection="None" />
+    <CodeBlockProperty Name="mon_1_R" Type="string" DefaultValue="&quot;model://2cb618f6-a4a6-4c3e-b4f3-70fde863822e&quot;" SyncDirection="None" />
+    <CodeBlockProperty Name="mon_2_R" Type="string" DefaultValue="&quot;model://6fc0e37b-4ede-43d3-85fc-32187b0c1afa&quot;" SyncDirection="None" />
+    <CodeBlockProperty Name="mon_3_R" Type="string" DefaultValue="&quot;model://9037eb2b-8456-400c-a105-b331b53245c3&quot;" SyncDirection="None" />
+    <CodeBlockProperty Name="zig" Type="Entity" DefaultValue="236bca1f-c9a3-42b2-acd7-50ca0318cd50" SyncDirection="None" />
+    <CodeBlockProperty Name="gal" Type="Entity" DefaultValue="415e8e39-37a9-4c8e-bd1d-3c0e6fe92fe3" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="SpawnMidPig" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+local parent = _EntityService:GetEntityByPath("/maps/map01")
+_SpawnService:SpawnByModelId(self.mon_0_L,"pig_L"..self.num,Vector3(-41.20811,8.574826,0),parent)
+self.num = self.num+1
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SpawnTopPig" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+local parent = _EntityService:GetEntityByPath("/maps/map01")
+_SpawnService:SpawnByModelId(self.mon_0_L,"pig_L"..self.num,Vector3(-41.20811,12.2,8),parent)
+self.num = self.num+1
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SpawnBottomPig" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+local parent = _EntityService:GetEntityByPath("/maps/map01")
+_SpawnService:SpawnByModelId(self.mon_0_L,"pig_L"..self.num,Vector3(-41.20811,7.2,8),parent)
+self.num = self.num+1
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SpawnMidDog" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+local parent = _EntityService:GetEntityByPath("/maps/map01")
+_SpawnService:SpawnByModelId(self.mon_1_L,"dog_L"..self.num,Vector3(-41.20811,8.574826,0),parent)
+self.num = self.num+1
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SpawnTopDog" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+local parent = _EntityService:GetEntityByPath("/maps/map01")
+_SpawnService:SpawnByModelId(self.mon_1_L,"dog_L"..self.num,Vector3(-41.20811,12.2,0),parent)
+self.num = self.num+1
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SpawnBottomDog" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+local parent = _EntityService:GetEntityByPath("/maps/map01")
+_SpawnService:SpawnByModelId(self.mon_1_L,"dog_L"..self.num,Vector3(-41.20811,7.2,0),parent)
+self.num = self.num+1
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SpawnMidGod" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+local parent = _EntityService:GetEntityByPath("/maps/map01")
+_SpawnService:SpawnByModelId(self.mon_2_L,"God_L"..self.num,Vector3(-41.20811,8.574826,0),parent)
+self.num = self.num+1
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SpawnTopGod" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+local parent = _EntityService:GetEntityByPath("/maps/map01")
+_SpawnService:SpawnByModelId(self.mon_2_L,"God_L"..self.num,Vector3(-41.20811,12.2,0),parent)
+self.num = self.num+1
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SpawnBottomGod" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+local parent = _EntityService:GetEntityByPath("/maps/map01")
+_SpawnService:SpawnByModelId(self.mon_2_L,"God_L"..self.num,Vector3(-41.20811,7.2,0),parent)
+self.num = self.num+1
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SpawnTop_L" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="mon_lv" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if(mon_lv == 0)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_0_L,"dog_L"..self.num,Vector3(-42.464,12.2,0),parent)
+	self.num = self.num+1
+elseif(mon_lv == 1)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_1_L,"dog_L"..self.num,Vector3(-42.464,12.2,0),parent)
+	self.num = self.num+1
+elseif(mon_lv == 2)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_2_L,"dog_L"..self.num,Vector3(-42.464,12.2,0),parent)
+	self.num = self.num+1
+elseif(mon_lv == 3)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_3_L,"dog_L"..self.num,Vector3(-42.464,12.2,0),parent)
+	self.num = self.num+1
+end
+self:chat_change(self.zig,"상단으로 진격!","돌격 앞으로!!!")
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SpawnMid_L" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="mon_lv" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if(mon_lv == 0)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_0_L,"dog_L"..self.num,Vector3(-42.464,8.574826,0),parent)
+	self.num = self.num+1
+elseif(mon_lv == 1)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_1_L,"dog_L"..self.num,Vector3(-42.464,8.574826,0),parent)
+	self.num = self.num+1
+elseif(mon_lv == 2)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_2_L,"dog_L"..self.num,Vector3(-42.464,8.574826,0),parent)
+	self.num = self.num+1
+elseif(mon_lv == 3)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_3_L,"dog_L"..self.num,Vector3(-42.464,8.574826,0),parent)
+	self.num = self.num+1
+end
+
+self:chat_change(self.zig,"중앙으로 돌격!","돌격 앞으로!!!")
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SpawnBot_L" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="mon_lv" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if(mon_lv == 0)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_0_L,"dog_L"..self.num,Vector3(-42.464,7.2,0),parent)
+	self.num = self.num+1
+elseif(mon_lv == 1)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_1_L,"dog_L"..self.num,Vector3(-42.464,7.2,0),parent)
+	self.num = self.num+1
+elseif(mon_lv == 2)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_2_L,"dog_L"..self.num,Vector3(-42.464,7.2,0),parent)
+	self.num = self.num+1
+elseif(mon_lv == 3)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_3_L,"dog_L"..self.num,Vector3(-42.464,7.2,0),parent)
+	self.num = self.num+1
+end
+
+self:chat_change(self.zig,"하단으로 공격!","돌격 앞으로!!!")
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SpawnTop_R" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="mon_lv" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if(mon_lv == 0)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_0_R,"dog_L"..self.num,Vector3(16.324,12.2,0),parent)
+	self.num = self.num+1
+elseif(mon_lv == 1)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_1_R,"dog_L"..self.num,Vector3(16.324,12.2,0),parent)
+	self.num = self.num+1
+elseif(mon_lv == 2)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_2_R,"dog_L"..self.num,Vector3(16.324,12.2,0),parent)
+	self.num = self.num+1
+elseif(mon_lv == 3)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_3_R,"dog_L"..self.num,Vector3(16.324,12.2,0),parent)
+	self.num = self.num+1
+end
+
+self:chat_change(self.gal,"상단에 기계를 보내라!","이~히히히히!!")
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SpawnMid_R" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="mon_lv" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if(mon_lv == 0)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_0_R,"dog_L"..self.num,Vector3(16.324,8.574826,0),parent)
+	self.num = self.num+1
+elseif(mon_lv == 1)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_1_R,"dog_L"..self.num,Vector3(16.324,8.574826,0),parent)
+	self.num = self.num+1
+elseif(mon_lv == 2)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_2_R,"dog_L"..self.num,Vector3(16.324,8.574826,0),parent)
+	self.num = self.num+1
+elseif(mon_lv == 3)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_3_R,"dog_L"..self.num,Vector3(16.324,8.574826,0),parent)
+	self.num = self.num+1
+end
+
+self:chat_change(self.gal,"중앙으로 기계병사 돌진!","이~히히히히!!")
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SpawnBot_R" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="mon_lv" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if(mon_lv == 0)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_0_R,"dog_L"..self.num,Vector3(16.324,7.2,0),parent)
+	self.num = self.num+1
+elseif(mon_lv == 1)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_1_R,"dog_L"..self.num,Vector3(16.324,7.2,0),parent)
+	self.num = self.num+1
+elseif(mon_lv == 2)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_2_R,"dog_L"..self.num,Vector3(16.324,7.2,0),parent)
+	self.num = self.num+1
+elseif(mon_lv == 3)then
+	local parent = _EntityService:GetEntityByPath("/maps/map01")
+	_SpawnService:SpawnByModelId(self.mon_3_R,"dog_L"..self.num,Vector3(16.324,7.2,0),parent)
+	self.num = self.num+1
+end
+
+self:chat_change(self.gal,"하단에 기계 출진!","이~히히히히!!")
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="chat_change" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="E" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+        <CodeBlockProperty Name="str" Type="string" DefaultValue="&quot;&quot;" SyncDirection="None" />
+        <CodeBlockProperty Name="default_message" Type="string" DefaultValue="&quot;&quot;" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+E.ChatBalloonComponent.Message = str
+E.ChatBalloonComponent.HideDuration = 0
+local a = function()
+	E.ChatBalloonComponent.Message = default_message
+	E.ChatBalloonComponent.HideDuration = 5
+end
+_TimerService:SetTimerOnce(a,5)
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleTriggerEnterEvent" EventName="TriggerEnterEvent" Target="self" Scope="Client">
+      <Code><![CDATA[
+-- Parameters
+local TriggerBodyEntity = event.TriggerBodyEntity
+-------------------------------------------------------
+if(TriggerBodyEntity ~= _UserService.LocalPlayer) then return end
+--if(TriggerBodyEntity.Common == nil) then return end
+--if(TriggerBodyEntity.Common.is_player == false) then return end
+if TriggerBodyEntity.Common.is_left == self.is_left then
+	self.is_Near = true	
+	TriggerBodyEntity.MonsterSummonComponent.summonUI.Enable = true
+	TriggerBodyEntity.MonsterSummonComponent.E = self.Entity
+end
+
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleTriggerLeaveEvent" EventName="TriggerLeaveEvent" Target="self" Scope="Client">
+      <Code><![CDATA[
+-- Parameters
+local TriggerBodyEntity = event.TriggerBodyEntity
+--------------------------------------------------------
+if(TriggerBodyEntity ~= _UserService.LocalPlayer) then return end
+if (TriggerBodyEntity.Common.is_left == self.is_left)then
+	self.is_Near = false
+	TriggerBodyEntity.MonsterSummonComponent.summonUI.Enable = false
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
