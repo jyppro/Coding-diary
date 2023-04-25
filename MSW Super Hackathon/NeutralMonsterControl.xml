@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="981d16e9-7c8f-4398-b91d-8fb09ab99452" Language="Lua" Name="NeutralMonsterControl" Type="Component" Source="None" ModifyTime="2022-11-23T18:54:16.6390765+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="line" Type="number" DefaultValue="0" SyncDirection="All" />
+  </Properties>
+  <Methods />
+  <EntityEventHandlers />
+</CodeBlockFile>
