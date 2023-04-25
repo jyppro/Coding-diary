@@ -1,0 +1,215 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="de854c60-d6c7-45fa-90b8-9f4d3a10f4da" Language="Lua" Name="MonsterSummonComponent" Type="Component" Source="None" ModifyTime="2022-11-27T20:12:17.63579+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="summonUI" Type="Entity" DefaultValue="e24fd79e-cdf6-4ea2-bb80-d0f2611100cf" SyncDirection="None" />
+    <CodeBlockProperty Name="E" Type="Entity" DefaultValue="nil" SyncDirection="All" />
+    <CodeBlockProperty Name="lv" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="cooltime" Type="number" DefaultValue="20" SyncDirection="All" />
+    <CodeBlockProperty Name="top_able" Type="boolean" DefaultValue="true" SyncDirection="All" />
+    <CodeBlockProperty Name="mid_able" Type="boolean" DefaultValue="true" SyncDirection="All" />
+    <CodeBlockProperty Name="bot_able" Type="boolean" DefaultValue="true" SyncDirection="All" />
+    <CodeBlockProperty Name="top_left" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="mid_left" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="bot_left" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="topcool_UI" Type="Entity" DefaultValue="82fe8847-c1ea-4381-81f8-06fb51e2e4d7" SyncDirection="None" />
+    <CodeBlockProperty Name="midcool_UI" Type="Entity" DefaultValue="97cf11f0-1acb-48bb-ac9c-b6b3f2bf2190" SyncDirection="None" />
+    <CodeBlockProperty Name="botcool_UI" Type="Entity" DefaultValue="9f551924-e1b4-451b-9c1c-f3993f87117e" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+self.lv = 0
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="top_cool" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+self.top_able = false
+self.mid_able = false
+self.bot_able = false
+self.top_left = self.cooltime
+if(self.mid_left < 4) then
+	self.mid_left = 4
+end
+if(self.bot_left < 4) then
+	self.bot_left = 4
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="mid_cool" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+self.top_able = false
+self.mid_able = false
+self.bot_able = false
+self.mid_left = self.cooltime
+if(self.top_left < 4) then
+	self.top_left = 4
+end
+if(self.bot_left < 4) then
+	self.bot_left = 4
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="bot_cool" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+self.top_able = false
+self.mid_able = false
+self.bot_able = false
+self.bot_left = self.cooltime
+if(self.mid_left < 3) then
+	self.mid_left = 3
+end
+if(self.top_left < 3) then
+	self.top_left = 3
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnUpdate" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="delta" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if(self.top_left > 0 ) then
+	self.top_left = self.top_left - delta
+	self:SummonCoolUI_top(self.top_left)
+	if(self.top_left <= 0)then
+		self.top_able = true
+		self:top_UI_clear()
+	end
+end
+if(self.mid_left > 0 ) then
+	self.mid_left = self.mid_left - delta
+	self:SummonCoolUI_mid(self.mid_left)
+	if(self.mid_left <= 0)then
+		self.mid_able = true
+		self:mid_UI_clear()
+	end
+end
+if(self.bot_left > 0 ) then
+	self.bot_left = self.bot_left - delta
+	self:SummonCoolUI_bot(self.bot_left)
+	if(self.bot_left <= 0)then
+		self.bot_able = true
+		self:bot_UI_clear()
+	end
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SummonCoolUI_top" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="cool" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if(self.Entity ~= _UserService.LocalPlayer) then return end
+local cooltime = math.floor(cool)
+self.topcool_UI.TextComponent.Text = string.format("%d s",cooltime)
+self.topcool_UI.SpriteGUIRendererComponent.Color = Color.gray
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SummonCoolUI_mid" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="cool" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if(self.Entity ~= _UserService.LocalPlayer) then return end
+local cooltime = math.floor(cool)
+self.midcool_UI.TextComponent.Text = string.format("%d s",cooltime)
+self.midcool_UI.SpriteGUIRendererComponent.Color = Color.gray
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="SummonCoolUI_bot" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="cool" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if(self.Entity ~= _UserService.LocalPlayer) then return end
+local cooltime = math.floor(cool)
+self.botcool_UI.TextComponent.Text = string.format("%d s",cooltime)
+self.botcool_UI.SpriteGUIRendererComponent.Color = Color.gray
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="top_UI_clear" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+if(self.Entity ~= _UserService.LocalPlayer) then return end
+self.topcool_UI.TextComponent.Text = ""
+self.topcool_UI.SpriteGUIRendererComponent.Color = Color.clear
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="mid_UI_clear" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+if(self.Entity ~= _UserService.LocalPlayer) then return end
+self.midcool_UI.TextComponent.Text = ""
+self.midcool_UI.SpriteGUIRendererComponent.Color = Color.clear
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="bot_UI_clear" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+if(self.Entity ~= _UserService.LocalPlayer) then return end
+self.botcool_UI.TextComponent.Text = ""
+self.botcool_UI.SpriteGUIRendererComponent.Color = Color.clear
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleKeyDownEvent" EventName="KeyDownEvent" Target="service:InputService" Scope="Client">
+      <Code><![CDATA[
+-- Parameters
+local key = event.key
+--------------------------------------------------------
+if(self.Entity ~= _UserService.LocalPlayer) then return end
+if(self.summonUI.Enable == false) then return end
+if(self.E.MonsterSponConpoment_L.is_Near and self.E.MonsterSponConpoment_L.is_left == self.Entity.Common.is_left) then
+	if self.Entity.Common.is_left == true then
+		if (key == KeyboardKey.Q and self.top_able) then
+			self.summonUI.Enable = false
+			self:top_cool()
+			self.E.MonsterSponConpoment_L:SpawnTop_L(math.floor(self.lv))
+		elseif (key == KeyboardKey.W and self.mid_able) then
+			self.summonUI.Enable = false
+			self:mid_cool()
+			self.E.MonsterSponConpoment_L:SpawnMid_L(math.floor(self.lv))
+		elseif (key == KeyboardKey.E and self.bot_able) then
+			self.summonUI.Enable = false
+			self:bot_cool()
+			self.E.MonsterSponConpoment_L:SpawnBot_L(math.floor(self.lv))
+		end
+	elseif self.Entity.Common.is_left == false then
+		if (key == KeyboardKey.Q and self.top_able) then
+			self.summonUI.Enable = false
+			self:top_cool()
+			self.E.MonsterSponConpoment_L:SpawnTop_R(math.floor(self.lv))
+		elseif (key == KeyboardKey.W and self.mid_able) then
+			self.summonUI.Enable = false
+			self:mid_cool()
+			self.E.MonsterSponConpoment_L:SpawnMid_R(math.floor(self.lv))
+		elseif (key == KeyboardKey.E and self.bot_able) then
+			self.summonUI.Enable = false
+			self:bot_cool()
+			self.E.MonsterSponConpoment_L:SpawnBot_R(math.floor(self.lv))
+		end
+	end 
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
