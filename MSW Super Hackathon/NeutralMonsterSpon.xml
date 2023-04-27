@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="74b5f095-db51-4481-8fa5-4b206bd1e000" Language="Lua" Name="NeutralMonsterSpon" Type="Component" Source="None" ModifyTime="2022-11-25T05:04:38.2310227+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="num" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="count" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="max_mon" Type="number" DefaultValue="9" SyncDirection="All" />
+    <CodeBlockProperty Name="top" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="mid" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="bot" Type="number" DefaultValue="0" SyncDirection="All" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+local summon_random = function() 
+	if(self.count < self.max_mon) then
+		local parent = _EntityService:GetEntityByPath("/maps/map01")
+		local loc = self:randomposition()
+		local line = loc.z
+		loc.z = 0
+		local spawn = _SpawnService:SpawnByModelId("model://11644b16-dbb5-46ce-ad79-77793401b9a1","arrow",loc,parent)
+		wait(3)
+		spawn:Destroy()
+		self.num = self.num + 1
+		self.count = self.count + 1
+		local mon = _SpawnService:SpawnByModelId("model://maplestorymonster$98abc59220c14814a7f08012916caac8","Neutral"..self.num,loc,parent)
+		mon.NeutralMonsterControl.line = line
+	end
+end
+local parent = _EntityService:GetEntityByPath("/maps/map01")
+for i = 1, 9,1 do
+	local loc = self:randomposition()
+	local line = loc.z
+	loc.z = 0
+	self.num = self.num + 1
+	local mon = _SpawnService:SpawnByModelId("model://maplestorymonster$98abc59220c14814a7f08012916caac8","Neutral"..self.num,loc,parent)
+	mon.NeutralMonsterControl.line = line
+end
+self.count = 9
+_TimerService:SetTimerRepeat(summon_random,10)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="randomposition" ExecSpace="All">
+      <Return Type="Vector3" DefaultValue="Vector3(0,0,0)" SyncDirection="None" />
+      <Code><![CDATA[
+if (self.count >= 9) then return Vector3.zero end
+local x = math.random()*9 - 12
+local tem = math.random(3)
+local y = 0
+local z = 0
+if(tem == 1) then
+	if(self.top >= 3) then return self:randomposition() end
+	y = 25
+	z = 1
+	self.top = self.top + 1 
+elseif tem == 2 then
+	if(self.mid >= 3) then return self:randomposition() end
+	y = 9
+	z = 2
+	self.mid = self.mid + 1
+elseif tem == 3 then
+	if(self.bot >= 3) then return self:randomposition() end
+	y = -6
+	z = 3
+	self.bot = self.bot + 1
+end
+
+return Vector3(x,y,z)
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleEntityDestroyEvent" EventName="EntityDestroyEvent" Target="service:EntityService" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local Entity = event.Entity
+--------------------------------------------------------
+if(Entity.NeutralMonsterControl ~= nil) then
+	self.count = self.count - 1
+	if(Entity.NeutralMonsterControl.line == 1)then
+		self.top = self.top - 1
+	elseif(Entity.NeutralMonsterControl.line == 2)then
+		self.mid = self.mid - 1
+	elseif(Entity.NeutralMonsterControl.line == 3) then
+		self.bot = self.bot - 1
+	end
+end
+
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
