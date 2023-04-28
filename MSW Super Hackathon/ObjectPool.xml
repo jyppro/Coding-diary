@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="2afe1b68-93aa-4630-8879-bbc9b374c090" Language="Lua" Name="ObjectPool" Type="Component" Source="None" ModifyTime="2022-11-19T22:55:27.6343972+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="modelId" Type="string" DefaultValue="&quot;&quot;" SyncDirection="All" />
+    <CodeBlockProperty Name="initPoolSize" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="objects" Type="array" DefaultValue="Entity" SyncDirection="All" />
+    <CodeBlockProperty Name="objectName" Type="string" DefaultValue="&quot;&quot;" SyncDirection="All" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="GetPooledEntity" ExecSpace="All">
+      <Return Type="Entity" DefaultValue="nil" SyncDirection="None" />
+      <Code><![CDATA[
+-- Find disabled object
+for index, object in ipairs(self.objects) do
+	if object.Enable == false then
+		return object
+	end
+end
+
+-- No disabled object in the pool: Create new one
+return self:CreateNewObject()
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="CreateNewObject" ExecSpace="All">
+      <Return Type="Entity" DefaultValue="nil" SyncDirection="None" />
+      <Code><![CDATA[
+local object = _SpawnService:SpawnByModelId(self.modelId, self.objectName, Vector3.zero, self.Entity)
+object.Enable = false
+table.insert(self.objects, object)
+
+return object
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+for i = 1, self.initPoolSize do
+	self:CreateNewObject()
+end
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>
