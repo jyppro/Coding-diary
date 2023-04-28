@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="7c2987fc-594f-43b3-8eac-61d0682ffb61" Language="Lua" Name="Player" Type="Component" Source="None" ModifyTime="2022-11-27T22:43:45.3306714+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="isReady" Type="boolean" DefaultValue="false" SyncDirection="None" />
+    <CodeBlockProperty Name="roomIdx" Type="number" DefaultValue="0" SyncDirection="None" />
+    <CodeBlockProperty Name="readyButton" Type="any" DefaultValue="nil" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+wait(1)
+self.readyButton = _EntityService:GetEntity("35d164e0-c36f-4699-85ce-c4100b0bac91") -- UIMatching의 Entity ID를 입력
+-- Instance Map으로 이동하면 UIMatching이 보이지 않도록 합니다.
+if _UserService.LocalPlayer.CurrentMapName == "map01" then
+	self.readyButton.Enable = false
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="back" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="a" Type="string" DefaultValue="&quot;&quot;" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+_InstanceMapService:MoveUserToParentMap(a)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnReady" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+self.isReady = true
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnCancelReady" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+self.isReady = false
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>
