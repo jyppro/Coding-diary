@@ -1,0 +1,289 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="PlayerAttack" Language="Lua" Name="PlayerAttack" Type="Extend" Source="Template" Target="MOD.Core.AttackComponent" ModifyTime="2022-11-27T20:45:37.2106227+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="3" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="property" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="critical_probability" Type="number" DefaultValue="0.3" SyncDirection="All" />
+    <CodeBlockProperty Name="offense_power" Type="number" DefaultValue="50" SyncDirection="All" />
+    <CodeBlockProperty Name="Property_UI" Type="Entity" DefaultValue="5371639b-792f-4b3e-ac11-1b591892dc89" SyncDirection="None" />
+    <CodeBlockProperty Name="system" Type="Entity" DefaultValue="d7c43fb2-cea0-461f-805e-1b0da82d5049" SyncDirection="All" />
+    <CodeBlockProperty Name="player1" Type="Entity" DefaultValue="0a8fcb37-847b-41f7-b5f1-f63d52e864c5" SyncDirection="None" />
+    <CodeBlockProperty Name="player2" Type="Entity" DefaultValue="f63dc090-5f10-4c9d-897c-8a86a84ca81d" SyncDirection="None" />
+    <CodeBlockProperty Name="FireEff" Type="Entity" DefaultValue="nil" SyncDirection="All" />
+    <CodeBlockProperty Name="GressEff" Type="Entity" DefaultValue="nil" SyncDirection="All" />
+    <CodeBlockProperty Name="IceEff" Type="Entity" DefaultValue="nil" SyncDirection="All" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+self._T.shape = BoxShape(Vector2.zero, Vector2.one, 0)
+if(self.Entity.CurrentMapName ~= "로비") then
+	self:change_property_begin()
+end
+self.GressEff = _SpawnService:SpawnByModelId("model://8b9d055c-d54b-42aa-b3a3-b8055a6ae94a","GressAura",Vector3.zero,self.Entity)
+self.FireEff = _SpawnService:SpawnByModelId("model://2a39e752-e93b-4c4e-a193-a46d40fbf99d","FireAura",Vector3.zero,self.Entity)
+self.IceEff = _SpawnService:SpawnByModelId("model://7d047b6b-9a82-440e-8004-98b49782a8d2","IceAura",Vector3.zero,self.Entity)
+self.GressEff.Enable = false
+self.FireEff.Enable = false
+self.IceEff.Enable = false
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="AttackNormal" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+local playerController = self.Entity.PlayerControllerappend
+local transform = self.Entity.TransformComponent
+if playerController and transform then
+	local worldPosition = transform.WorldPosition
+	local attackOffset = Vector2(worldPosition.x + 0.35 * playerController.LookDirectionX, worldPosition.y + 0.35)
+	self._T.shape.Position = attackOffset
+	self._T.shape.Size = Vector2(0.7,0.7)
+	
+	self:AttackFast(self._T.shape, nil)
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="CalcDamage" ExecSpace="All">
+      <Return Type="int" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="attacker" Type="Entity" SyncDirection="None" />
+        <CodeBlockProperty Name="defender" Type="Entity" SyncDirection="None" />
+        <CodeBlockProperty Name="attackInfo" Type="string" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+local damage = self.offense_power
+if(defender.Common == nil) then return end
+if(defender.Common.is_player == true) then
+	damage = damage*self:cal_property(attacker.PlayerAttack.property,defender.PlayerAttack.property)
+end
+if(attackInfo == "z") then 
+	damage = damage*0.5 - 7
+end
+if(attackInfo == "property" and defender.Common.is_player) then
+	if(math.floor(self.property) == 0) then
+		self:attack_grass(defender)
+	elseif(math.floor(self.property) == 1) then
+		self:attack_fire(defender,attacker)
+		defender.Common.fire_Entity = attacker
+	elseif(math.floor(self.property) == 2) then
+		self:attack_water(defender)
+	end
+end
+if(defender.Common.is_build) then
+	damage = damage*1.3
+elseif(defender.Common.is_monster) then
+	damage = damage*0.7
+end
+if(attacker.Common.fever) then damage = damage * 2 end
+if(defender.Common.fever) then damage = damage / 2 end
+return damage
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="CalcCritical" ExecSpace="All">
+      <Return Type="boolean" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="attacker" Type="Entity" SyncDirection="None" />
+        <CodeBlockProperty Name="defender" Type="Entity" SyncDirection="None" />
+        <CodeBlockProperty Name="attackInfo" Type="string" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+return _UtilLogic:RandomDouble() < self.critical_probability
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="GetCriticalDamageRate" ExecSpace="All">
+      <Return Type="number" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+return 1.5
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="change_ap" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="property" Type="number" DefaultValue="0" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if (self.property) then self.property = nil end
+--property값이 0,1,2면 각각 풀 불 물
+if(property == 0 or property == 1 or property == 2)then
+	self.property = property
+	self.system.PlayerDataComponent.User_Property[self.Entity] = property
+	self:ElementAura()
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="cal_property" ExecSpace="All">
+      <Return Type="number" DefaultValue="0" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="attack" Type="number" DefaultValue="0" SyncDirection="None" />
+        <CodeBlockProperty Name="defence" Type="number" DefaultValue="0" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if(attack == defence)then
+	return 1
+elseif (attack - defence == 1)then
+	return 1.50
+elseif(attack == 0 and defence == 2) then
+	return 1.50
+else
+	return 1
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="attack_fire" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="defender" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+        <CodeBlockProperty Name="attacker" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+defender.Common:get_fired(attacker)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="attack_water" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="defender" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+defender.Common:get_watered()
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="attack_grass" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="defender" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+defender.Common:get_grassed()
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="change_property" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+if(self.Entity ~= _UserService.LocalPlayer) then return end
+self.Property_UI.Enable = true
+local i = 1
+local str = {"",""}
+	
+for k, v in pairs(_UserService.UserEntities) do
+	if(v.Common.is_left ~= self.Entity.Common.is_left) then
+		str[i] = v.PlayerComponent.Nickname .. "님의 속성은 " .. self:print_property(v.PlayerAttack.property) .."입니다."
+		i = 2
+	end
+end
+self.player1.TextComponent.Text = str[1]
+self.player2.TextComponent.Text = str[2]
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="close_UI" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+if(self.Entity ~= _UserService.LocalPlayer) then return end
+self.Property_UI.Enable = false
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="Change_offence_power" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="atk" Type="number" DefaultValue="0" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+self.offense_power = atk
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnMapEnter" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="enteredMap" Type="any" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if(enteredMap.Name ~= "로비")then
+	self:change_property()
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="IsAttackTarget" ExecSpace="All">
+      <Return Type="boolean" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="defender" Type="Entity" SyncDirection="None" />
+        <CodeBlockProperty Name="attackInfo" Type="string" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if(defender.Common == nil) then return false end
+if(defender.Common.is_neutral) then return true end
+if(defender.Common.is_left ~= self.Entity.Common.is_left) then return true end
+
+return false
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="print_property" ExecSpace="All">
+      <Return Type="string" DefaultValue="&quot;&quot;" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="pro" Type="number" DefaultValue="0" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+local n = math.floor(pro)
+if(n == 0) then
+	return "풀"
+elseif(n == 1)then
+	return "불"
+elseif(n == 2) then
+	return "물"
+end
+return ""
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="ElementAura" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+if self.property == 0 then
+	self.GressEff.Enable = true
+	self.FireEff.Enable = false
+	self.IceEff.Enable = false
+
+elseif self.property == 1 then
+	self.GressEff.Enable = false
+	self.FireEff.Enable = true
+	self.IceEff.Enable = false
+elseif self.property == 2 then
+	self.GressEff.Enable = false
+	self.FireEff.Enable = false
+	self.IceEff.Enable = true
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="change_property_begin" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+if(self.Entity ~= _UserService.LocalPlayer) then return end
+self.Property_UI.Enable = true
+local i = 1
+local str = {"",""}
+self.player1.TextComponent.Text = str[1]
+self.player2.TextComponent.Text = str[2]
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandlePlayerActionEvent" EventName="PlayerActionEvent" Target="self" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local ActionName = event.ActionName
+local PlayerEntity = event.PlayerEntity
+--------------------------------------------------------
+if self:IsClient() then return end
+
+if ActionName == "Attack" then
+	self:AttackNormal()
+end
+
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
