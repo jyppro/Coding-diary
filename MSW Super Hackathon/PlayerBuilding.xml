@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="b7816872-70b4-4b3f-a73c-46623460dcbb" Language="Lua" Name="PlayerBuilding" Type="Component" Source="None" ModifyTime="2022-11-27T22:43:59.2137071+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="buildUI" Type="Entity" DefaultValue="41b3c647-8487-46bf-80e8-3258fe77ba46" SyncDirection="None" />
+    <CodeBlockProperty Name="E" Type="Entity" DefaultValue="4b3d91e5-ef40-47ea-9d32-55709d964353" SyncDirection="None" />
+    <CodeBlockProperty Name="lv" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="occupy_UI" Type="Entity" DefaultValue="58ba4661-4e63-4c4d-8519-2a844a126c82" SyncDirection="None" />
+    <CodeBlockProperty Name="Ban1" Type="Entity" DefaultValue="28cb7cfb-803a-4bc4-8b6d-a14fbc3780f0" SyncDirection="None" />
+    <CodeBlockProperty Name="Ban2" Type="Entity" DefaultValue="6478c9e1-2989-4896-9e35-feb9c386732f" SyncDirection="None" />
+    <CodeBlockProperty Name="Ban3" Type="Entity" DefaultValue="07a8f958-f45a-4310-8451-ba63cc3b87ba" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="build_UI_on" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="E" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if(E ~= _UserService.LocalPlayer)then return end
+self.buildUI.Enable = true
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="build_UI_off" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="E" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if(E ~= _UserService.LocalPlayer)then return end
+self.buildUI.Enable = false
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="occupy_UI_on" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+if(self.Entity ~= _UserService.LocalPlayer)then return end
+self.occupy_UI.Enable = true
+local a = function()
+	self.occupy_UI.Enable = false
+end
+_TimerService:SetTimerOnce(a,5)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="Ban" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+if self.lv == 1 then
+	self.Ban1.Enable = false
+elseif self.lv == 2 then
+	self.Ban2.Enable = false
+elseif self.lv == 3 then
+	self.Ban3.Enable = false
+end
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleKeyDownEvent" EventName="KeyDownEvent" Target="service:InputService" Scope="Client">
+      <Code><![CDATA[
+-- Parameters
+local key = event.key
+if(self.Entity ~= _UserService.LocalPlayer) then return end
+if(self.buildUI.Enable == false) then return end
+-- 3가지 건물 중 어떤 건물을 건설할 지 키보드 숫자 1,2,3으로 결정
+if(self.E.BuildZone.buildable and self.E.BuildZone.is_left == self.Entity.Common.is_left) then
+	if self.Entity.Common.is_left == true then
+		if (key == KeyboardKey.Q and self.lv >= 1) then
+			self.buildUI.Enable = false
+			self.E.BuildZone:LeftBuildOne(self.lv)
+		elseif (key == KeyboardKey.W and self.lv >= 2)then
+			self.buildUI.Enable = false
+			self.E.BuildZone:LeftBuildTwo(self.lv)
+		elseif (key == KeyboardKey.E and self.lv >= 3) then
+			self.buildUI.Enable = false
+			self.E.BuildZone:LeftBuildThree(self.lv)
+		end
+	elseif self.Entity.Common.is_left == false then
+		if (key == KeyboardKey.Q and self.lv >= 1) then
+			self.buildUI.Enable = false
+			self.E.BuildZone:RightBuildOne(self.lv)
+		elseif (key == KeyboardKey.W and self.lv >= 2)then
+			self.buildUI.Enable = false
+			self.E.BuildZone:RightBuildTwo(self.lv)
+		elseif (key == KeyboardKey.E and self.lv >= 3) then
+			self.buildUI.Enable = false
+			self.E.BuildZone:RightBuildThree(self.lv)
+		end
+	end 
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
