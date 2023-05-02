@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="b23fc0ae-cb9e-4f42-8856-ba09f4656fbb" Language="Lua" Name="PlayerControllerappend" Type="Extend" Source="None" Target="MOD.Core.PlayerControllerComponent" ModifyTime="2022-11-26T21:26:13.8627565+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties />
+  <Methods>
+    <CodeBlockMethod Name="ActionDownJump" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+--do nothing
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="ActionSit" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+--do nothing
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>
