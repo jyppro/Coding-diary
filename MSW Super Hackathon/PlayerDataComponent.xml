@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="18de6eb2-18f5-43de-8c81-29d11b506ede" Language="Lua" Name="PlayerDataComponent" Type="Component" Source="None" ModifyTime="2022-11-25T04:56:29.794636+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="User_Property" Type="array" DefaultValue="number" SyncDirection="All" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="save_property" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="user" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+        <CodeBlockProperty Name="property" Type="number" DefaultValue="0" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+self.User_Property[user] = property
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="add_User" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="user" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+self.User_Property[user] = 0
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>
