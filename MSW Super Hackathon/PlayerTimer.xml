@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="987ab174-661e-4571-bd1a-528c2b134d0c" Language="Lua" Name="PlayerTimer" Type="Component" Source="None" ModifyTime="2022-11-26T17:05:08.5991168+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="UITime" Type="Entity" DefaultValue="d7d664b6-fc44-4dd7-b76a-81b8dd2357b6" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="SetTime" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="time" Type="number" DefaultValue="0" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if(self.Entity ~= _UserService.LocalPlayer) then return end
+if(time < 0) then
+	self.UITime.TextComponent.Text = string.format("레지스탕스 점령 %d 초", math.abs(time))
+elseif(time > 0) then
+	self.UITime.TextComponent.Text = string.format("블랙윙 점령 %d 초", time)
+else
+	self.UITime.TextComponent.Text = " "
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="UI_on" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+if(self.Entity ~= _UserService.LocalPlayer) then return end
+self.UITime.Enable = true
+
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="UI_off" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+if(self.Entity ~= _UserService.LocalPlayer) then return end
+self.UITime.Enable = false
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>
