@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="b3b24f71-831f-40a1-8867-b3c8e200a068" Language="Lua" Name="PointZone" Type="Component" Source="None" ModifyTime="2022-11-27T22:42:50.6898672+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="MaxHp" Type="number" DefaultValue="500" SyncDirection="All" />
+    <CodeBlockProperty Name="Hp" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="IsDestroy" Type="boolean" DefaultValue="false" SyncDirection="All" />
+    <CodeBlockProperty Name="DestroyDelay" Type="number" DefaultValue="0.6" SyncDirection="All" />
+    <CodeBlockProperty Name="DestroyEffect" Type="Entity" DefaultValue="37ca289d-a9f6-46e2-b7de-0f2b645e753e" SyncDirection="All" />
+    <CodeBlockProperty Name="Zone" Type="Entity" DefaultValue="4b3d91e5-ef40-47ea-9d32-55709d964353" SyncDirection="All" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="OnDestroy" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.IsDestroy = true
+
+
+local delayHide = function()
+	self.Entity:SetVisible(false)
+	self.Entity:SetEnable(false)
+end
+
+_TimerService:SetTimerOnce(delayHide, self.DestroyDelay)
+self.DestroyEffect.Enable = true
+self.Zone.Enable = true
+self.Zone.BuildZone.Enable = true
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>
