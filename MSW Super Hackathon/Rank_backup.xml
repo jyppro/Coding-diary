@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="ea892996-e66d-4ea7-adbe-d4ee256841db" Language="Lua" Name="Rank_backup" Type="Component" Source="None" ModifyTime="2022-11-27T22:44:11.7569109+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="is_near" Type="boolean" DefaultValue="false" SyncDirection="All" />
+    <CodeBlockProperty Name="score_DB" Type="table" DefaultValue="{}" SyncDirection="None" />
+    <CodeBlockProperty Name="user_DB" Type="table" DefaultValue="{}" SyncDirection="None" />
+    <CodeBlockProperty Name="user_num" Type="number" DefaultValue="0" SyncDirection="None" />
+    <CodeBlockProperty Name="UI" Type="Entity" DefaultValue="nil" SyncDirection="All" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="get_rank" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="keys" Type="string" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+local user_num = _DataStorageService:GetSortableDataStorage("Num")
+local score_data = _DataStorageService:GetSortableDataStorage("Score")
+local user_data = _DataStorageService:GetGlobalDataStorage("UserID")
+
+local a = 1
+--a,self.user_num = user_num:GetAndWait("1")
+for id = 1, self.user_num,1 do
+	a, self.user_DB[id] = user_data:GetAndWait(tostring(id))
+	a, self.score_DB[id] = score_data:GetAndWait(self.user_DB[id])
+end
+
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="update_rank" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="score" Type="number" SyncDirection="None" />
+        <CodeBlockProperty Name="user" Type="string" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+local user_num = _DataStorageService:GetSortableDataStorage("Num")
+local score_data = _DataStorageService:GetSortableDataStorage("Score")
+local user_data = _DataStorageService:GetGlobalDataStorage("UserID")
+local a = 1
+--a,self.user_num = user_num:GetAndWait("1")
+
+local flag = -1
+local error, val = score_data:GetAndWait(user)
+
+
+if(error == 0) then
+	score_data:SetAndWait(user,score)
+else 
+	score_data:SetAndWait(user,score)
+	user_data:SetAndWait(tostring(self.user_num+1),user)
+	user_num:SetAndWait("1",self.user_num+1)
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="print_rank" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+for id = 1,self.user_num,1 do
+	--log(id.."등"..self.user_DB[id]..self.score_DB[id])
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+local user_num = _DataStorageService:GetSortableDataStorage("Num")
+local score_data = _DataStorageService:GetSortableDataStorage("Score")
+local user_data = _DataStorageService:GetGlobalDataStorage("UserID")
+local user_id = {"a","b","c","d","e","f","g","h","i","j","dd","ddd","DDD","ASD","ASDASD","fk","z","Zd","ZA","zx","x","xx"}
+local scores = {99,98,97,64,45,44,34,33,32,31,30,29,28,22,21,20,19,18,17,16,14,13,12}
+local callback = function(errorcode, key)
+	--log(key.."값이 저장됨")
+end
+for id = 1, 20, 1 do
+	score_data:SetAsync(user_id[id],scores[id],callback)	
+	user_data:SetAsync(tostring(id),user_id[id],callback)
+end
+user_num:SetAsync("1",20,callback)
+--_DataStorageService:GetGlobalDataStoragePagesAndWait()
+
+
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="ELO" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="winner" Type="string" SyncDirection="None" />
+        <CodeBlockProperty Name="win_score" Type="number" SyncDirection="None" />
+        <CodeBlockProperty Name="loser" Type="string" SyncDirection="None" />
+        <CodeBlockProperty Name="lose_score" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+local win_prab = 1/(10^((win_score - lose_score)/400) + 1)
+local lose_prab = 1 - win_prab  
+local win = win_score + 10*lose_prab
+local lose = lose_score - 10*win_prab
+
+self:update_rank(win,winner)
+self:update_rank(lose,loser)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="new_user" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+
+local score_data = _DataStorageService:GetSortableDataStorage("Score")
+
+
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleKeyDownEvent" EventName="KeyDownEvent" Target="service:InputService" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local key = event.key
+--------------------------------------------------------
+if(key == KeyboardKey.Space and self.is_near == true) then
+	self:get_rank()
+	wait(5)
+	self:print_rank()
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleTriggerEnterEvent" EventName="TriggerEnterEvent" Target="self" Scope="Client">
+      <Code><![CDATA[
+-- Parameters
+local TriggerBodyEntity = event.TriggerBodyEntity
+--------------------------------------------------------
+if(_UserService.LocalPlayer == TriggerBodyEntity) then
+	self.is_near = true
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleTriggerLeaveEvent" EventName="TriggerLeaveEvent" Target="self" Scope="Client">
+      <Code><![CDATA[
+-- Parameters
+local TriggerBodyEntity = event.TriggerBodyEntity
+--------------------------------------------------------
+if(_UserService.LocalPlayer == TriggerBodyEntity) then
+	self.is_near = false
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
