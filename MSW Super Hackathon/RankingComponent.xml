@@ -1,0 +1,197 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="5ec9eff7-ff5f-4864-9cbb-34208fda6ce4" Language="Lua" Name="RankingComponent" Type="Component" Source="None" ModifyTime="2022-11-27T22:43:38.9146904+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="is_near" Type="boolean" DefaultValue="false" SyncDirection="All" />
+    <CodeBlockProperty Name="DB" Type="table" DefaultValue="{}" SyncDirection="None" />
+    <CodeBlockProperty Name="RankingUI" Type="Entity" DefaultValue="68d7db9a-1629-442c-ae50-4c6f858bee19" SyncDirection="None" />
+    <CodeBlockProperty Name="Top1" Type="Entity" DefaultValue="f15933d4-01c7-4941-bda7-3e848a79b84b" SyncDirection="None" />
+    <CodeBlockProperty Name="Top2" Type="Entity" DefaultValue="9ce5f57c-9f5e-4ac5-8308-dd1a5f6c42b9" SyncDirection="None" />
+    <CodeBlockProperty Name="Top3" Type="Entity" DefaultValue="28cb0ee9-1297-4182-a145-6451c17d35f9" SyncDirection="None" />
+    <CodeBlockProperty Name="Top4" Type="Entity" DefaultValue="e6df3ca8-ced4-4a72-bef5-35d47cb1feff" SyncDirection="None" />
+    <CodeBlockProperty Name="Top5" Type="Entity" DefaultValue="4a862f09-448c-4bfc-b7e4-792900c424ad" SyncDirection="None" />
+    <CodeBlockProperty Name="Top6" Type="Entity" DefaultValue="4d1a0ef5-cd7f-41a0-8deb-5b86a479f9a5" SyncDirection="None" />
+    <CodeBlockProperty Name="Top7" Type="Entity" DefaultValue="e51d0e98-61f3-4259-bebc-2d81224e93a8" SyncDirection="None" />
+    <CodeBlockProperty Name="Top8" Type="Entity" DefaultValue="a130ce95-2a3b-47f7-9d9f-b6d94d317cda" SyncDirection="None" />
+    <CodeBlockProperty Name="Top9" Type="Entity" DefaultValue="c7a59eb6-5800-4b0a-8a45-817b743c7763" SyncDirection="None" />
+    <CodeBlockProperty Name="Top10" Type="Entity" DefaultValue="48397631-8f87-4fdd-bf30-90c6093e9b80" SyncDirection="None" />
+    <CodeBlockProperty Name="top10_list" Type="array" DefaultValue="string" SyncDirection="All" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="get_rank" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+local rank_data = _DataStorageService:GetGlobalDataStorage("RANK")
+
+local call_back = function(error,key,value)
+	if (value == nil) then
+		return
+	end
+	local rank_DB = {}
+	local list = _UtilLogic:StringToTable(value)
+	for k,v in pairs(list) do
+		local tem = {k,v}
+		table.insert(rank_DB,tem)
+	end
+	table.sort(rank_DB,function(a,b) return a[2]>b[2] end)
+	self.DB = rank_DB
+end
+rank_data:GetAsync("RANKING",call_back)
+
+wait(5)
+for id = 1, 10,1 do
+	self.top10_list[math.floor(id)] = string.format("%d 등 유저 : %s 유저의 점수 : %d",math.floor(id),self.DB[math.floor(id)][1],self.DB[math.floor(id)][2])
+end
+
+--self:print_rank()
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="update_rank" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="score" Type="number" SyncDirection="None" />
+        <CodeBlockProperty Name="user" Type="string" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+local rank_data = _DataStorageService:GetGlobalDataStorage("RANK")
+
+local call_back = function(error,key,value)
+	if (value == nil) then
+		return
+	end
+	local rank_DB = {}
+	local list = _UtilLogic:StringToTable(value)
+	
+	list[user] = score
+	rank_data:SetAsync("RANKING",_UtilLogic:TableToString(list),function () end)
+end
+rank_data:GetAsync("RANKING",call_back)
+
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="print_rank" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+wait(5)
+self.Top1.TextComponent.Text = self.top10_list[1]
+self.Top2.TextComponent.Text = self.top10_list[2]
+self.Top3.TextComponent.Text = self.top10_list[3]
+self.Top4.TextComponent.Text = self.top10_list[4]
+self.Top5.TextComponent.Text = self.top10_list[5]
+self.Top6.TextComponent.Text = self.top10_list[6]
+self.Top7.TextComponent.Text = self.top10_list[7]
+self.Top8.TextComponent.Text = self.top10_list[8]
+self.Top9.TextComponent.Text = self.top10_list[9]
+self.Top10.TextComponent.Text = self.top10_list[10]
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+local rank_data = _DataStorageService:GetGlobalDataStorage("RANK")
+local user_id = {"a","b","c","d","e","f","g","h","i","j"}
+local scores = {98,99,97,64,45,44,34,33,32,131}
+local tem_table = {}
+local callback = function(errorcode, key)
+	--log(key.."값이 저장됨")
+end
+
+for id = 1, 10, 1 do
+	tem_table[user_id[id]] = scores[id]
+end
+rank_data:SetAsync("RANKING",_UtilLogic:TableToString(tem_table),callback)
+
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="ELO" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="winner1" Type="string" SyncDirection="None" />
+        <CodeBlockProperty Name="winner2" Type="string" SyncDirection="None" />
+        <CodeBlockProperty Name="win_score1" Type="number" SyncDirection="None" />
+        <CodeBlockProperty Name="win_score2" Type="number" SyncDirection="None" />
+        <CodeBlockProperty Name="loser1" Type="string" SyncDirection="None" />
+        <CodeBlockProperty Name="loser2" Type="string" SyncDirection="None" />
+        <CodeBlockProperty Name="loser_score1" Type="number" DefaultValue="0" SyncDirection="None" />
+        <CodeBlockProperty Name="loser_score2" Type="number" DefaultValue="0" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+local win_score = (win_score1 + win_score2)/2
+local lose_score = (loser_score1+loser_score2)/2
+local win_prab = 1/(10^((win_score - lose_score)/400) + 1)
+local lose_prab = 1 - win_prab  
+local win1 = win_score1 + 10*lose_prab
+local win2 = win_score2 + 10*lose_prab
+local lose1 = loser_score1 - 10*win_prab
+local lose2 = loser_score2 - 10*win_prab
+
+self:update_rank(win1,winner1)
+self:update_rank(win2,winner2)
+self:update_rank(lose1,loser1)
+self:update_rank(lose2,loser2)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="search_rank" ExecSpace="Server">
+      <Return Type="number" DefaultValue="0" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="user" Type="string" DefaultValue="&quot;&quot;" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+local rank_data = _DataStorageService:GetGlobalDataStorage("RANK")
+local data
+local call_back = function(error,key,value)
+	if (value == nil) then
+		return
+	end
+	local rank_DB = {}
+	local list = _UtilLogic:StringToTable(value)
+	
+	data = list[user]
+end
+rank_data:GetAsync("RANKING",call_back)
+wait(5)
+return tonumber(data)
+
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleKeyDownEvent" EventName="KeyDownEvent" Target="service:InputService" Scope="Client">
+      <Code><![CDATA[
+-- Parameters
+local key = event.key
+--------------------------------------------------------
+if(key == KeyboardKey.Space and self.is_near == true) then
+	self:get_rank()
+	self.RankingUI.Enable = true
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleTriggerEnterEvent" EventName="TriggerEnterEvent" Target="self" Scope="Client">
+      <Code><![CDATA[
+-- Parameters
+local TriggerBodyEntity = event.TriggerBodyEntity
+--------------------------------------------------------
+if(_UserService.LocalPlayer.Name == TriggerBodyEntity.Name) then
+	self.is_near = true
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleTriggerLeaveEvent" EventName="TriggerLeaveEvent" Target="self" Scope="Client">
+      <Code><![CDATA[
+-- Parameters
+local TriggerBodyEntity = event.TriggerBodyEntity
+--------------------------------------------------------
+if(_UserService.LocalPlayer.Name == TriggerBodyEntity.Name) then
+	
+	self.is_near = false
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
