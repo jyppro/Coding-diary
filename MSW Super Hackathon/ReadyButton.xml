@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="c7134e8f-6e07-4ac6-b6c1-9d4743beabf9" Language="Lua" Name="ReadyButton" Type="Component" Source="None" ModifyTime="2022-11-26T11:17:05.5921444+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="isReady" Type="boolean" DefaultValue="false" SyncDirection="None" />
+  </Properties>
+  <Methods />
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleButtonClickEvent" EventName="ButtonClickEvent" Target="entity:8e8ce54b-fb13-42cb-8bdf-de6ea25f98d5" Scope="Client">
+      <Code><![CDATA[
+-- Parameters
+local Entity = event.Entity
+--------------------------------------------------------
+if self.isReady == true then
+	self.isReady = false
+	self.Entity.TextComponent.Text = "Ready"
+	self.Entity.SpriteGUIRendererComponent.Color = Color.white
+	_UserService.LocalPlayer.Player:OnCancelReady()
+else
+	self.isReady = true
+	self.Entity.TextComponent.Text = "Stop"
+	self.Entity.SpriteGUIRendererComponent.Color = Color.FromHexCode("#fb3f3f")
+	_UserService.LocalPlayer.Player:OnReady()
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
