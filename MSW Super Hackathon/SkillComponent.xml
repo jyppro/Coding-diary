@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="96adb518-a7f8-4128-99c0-f10251c0d91e" Language="Lua" Name="SkillComponent" Type="Component" Source="None" ModifyTime="2022-11-27T23:01:34.0794204+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="timer" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="casting" Type="boolean" DefaultValue="false" SyncDirection="All" />
+    <CodeBlockProperty Name="lv" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="z_cooltime" Type="number" DefaultValue="10" SyncDirection="All" />
+    <CodeBlockProperty Name="x_cooltime" Type="number" DefaultValue="15" SyncDirection="All" />
+    <CodeBlockProperty Name="c_cooltime" Type="number" DefaultValue="60" SyncDirection="All" />
+    <CodeBlockProperty Name="z_able" Type="boolean" DefaultValue="true" SyncDirection="All" />
+    <CodeBlockProperty Name="x_able" Type="boolean" DefaultValue="true" SyncDirection="All" />
+    <CodeBlockProperty Name="c_able" Type="boolean" DefaultValue="true" SyncDirection="All" />
+    <CodeBlockProperty Name="CastingBar" Type="Entity" DefaultValue="1c7dc85e-c7a9-4f74-8c1e-ae8b99b77a43" SyncDirection="None" />
+    <CodeBlockProperty Name="Ztimer" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="Xtimer" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="Ctimer" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="Zcool_save" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="Xcool_save" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="Ccool_save" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="Skill1_cool" Type="Entity" DefaultValue="fac29a3e-b149-4de5-83ee-f9953584da47" SyncDirection="None" />
+    <CodeBlockProperty Name="Skill2_cool" Type="Entity" DefaultValue="4995b8c4-5bda-484b-ab1b-a4a56b414f78" SyncDirection="None" />
+    <CodeBlockProperty Name="Skill3_cool" Type="Entity" DefaultValue="bd0be5ab-d300-4414-b9a8-62ef18eba1a8" SyncDirection="None" />
+    <CodeBlockProperty Name="Skill1_cool_mobile" Type="Entity" DefaultValue="552ed601-c42c-4714-aad0-eae98c699c7f" SyncDirection="None" />
+    <CodeBlockProperty Name="Skill2_cool_mobile" Type="Entity" DefaultValue="2715efe2-7dc7-43c3-b1a4-48c3118d759e" SyncDirection="None" />
+    <CodeBlockProperty Name="Skill3_cool_mobile" Type="Entity" DefaultValue="8587fef5-0707-43e2-9aec-149c615770d5" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="skill_z" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+
+local f = function() self.Entity.PlayerAttack:Attack(Vector2(3.36,2.58),Vector2(self:look()*-1.68,-0.1),"z") end 
+_EffectService:PlayEffectAttached("ad4c9874239f44e38d6536c6d046250d",self.Entity,Vector3(0,0,0),0,Vector3(self:look(),1,1))
+_TimerService:SetTimerOnce(f,0.01)
+_TimerService:SetTimerOnce(f,0.3)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="look" ExecSpace="All">
+      <Return Type="number" DefaultValue="0" SyncDirection="None" />
+      <Code><![CDATA[
+
+if(self.Entity.PlayerControllerappend.LookDirectionX < 0)then
+	return 1
+end
+return -1
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="BackHome" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+local back = 0
+if(self.Entity.Common.is_left) then
+	back = -57
+else
+	back = 32
+end
+self.Entity.MovementComponent:SetWorldPosition(Vector2(back,9))
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="skill_c" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+if(self.casting or (self.Entity.RigidbodyComponent:IsOnGround() == false)) then return end
+self.casting = true
+self:casting_bar()
+local f = function()
+	self:BackHome()
+	self.Entity.Common:canmove()
+	self.casting = false
+	self:casting_bar_remove()
+	self:c_cool()
+	self:C_coolTimer()
+end
+self.timer = _TimerService:SetTimerOnce(f,5)
+self.Entity.Common:unmove()
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="skill_x" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.Entity.PlayerAttack:Attack(Vector2(6,0.3),Vector2(self:look()*-3,-0.1),"property")
+_EffectService:PlayEffectAttached("c81b2c2ce2e540ea98de6eb494e1df00",self.Entity,Vector3(self:look()*-3.5,-1,0),0,Vector3(self:look(),1,1))
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="z_cool" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.z_able = false
+local a = function() self.z_able = true end
+_TimerService:SetTimerOnce(a,self.z_cooltime)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="x_cool" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.x_able = false
+local a = function() self.x_able = true end
+_TimerService:SetTimerOnce(a,self.x_cooltime)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="c_cool" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.c_able = false
+local a = function() self.c_able = true end
+_TimerService:SetTimerOnce(a,self.c_cooltime)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="casting_bar" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.CastingBar.Enable = true
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="casting_bar_remove" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.CastingBar.Enable = false
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="Z_coolTimer" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.Zcool_save = self.z_cooltime -- Z 쿨타임을 저장
+local Z = function() 
+	self.Zcool_save = self.Zcool_save - 1.0
+	self.Skill1_cool.TextComponent.Text = string.format("%d",self.Zcool_save)
+	self.Skill1_cool_mobile.TextComponent.Text = string.format("%d",self.Zcool_save)
+	if(self.Zcool_save < 0.1)then
+		_TimerService:ClearTimer(self.Ztimer)
+		self.Skill1_cool.TextComponent.Text = " "
+		self.Skill1_cool_mobile.TextComponent.Text = " "
+	end
+end
+
+self.Ztimer = _TimerService:SetTimerRepeat(Z,1.0)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="X_coolTimer" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.Xcool_save = self.x_cooltime -- X 쿨타임을 저장
+local X = function() 
+	self.Xcool_save = self.Xcool_save - 1.0
+	self.Skill2_cool.TextComponent.Text = string.format("%d",self.Xcool_save)
+	self.Skill2_cool_mobile.TextComponent.Text = string.format("%d",self.Xcool_save)
+	if(self.Xcool_save < 0.1)then
+		_TimerService:ClearTimer(self.Xtimer)
+		self.Skill2_cool.TextComponent.Text = " "
+		self.Skill2_cool_mobile.TextComponent.Text = " "
+	end
+end
+
+self.Xtimer = _TimerService:SetTimerRepeat(X,1.0)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="C_coolTimer" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.Ccool_save = self.c_cooltime -- C 쿨타임을 저장
+local C = function() 
+	self.Ccool_save = self.Ccool_save - 1.0
+	self.Skill3_cool.TextComponent.Text = string.format("%d",self.Ccool_save)
+	self.Skill3_cool_mobile.TextComponent.Text = string.format("%d",self.Ccool_save)
+	if(self.Ccool_save < 0.1)then
+		_TimerService:ClearTimer(self.Ctimer)
+		self.Skill3_cool.TextComponent.Text = " "
+		self.Skill3_cool_mobile.TextComponent.Text = " "
+	end
+end
+
+self.Ctimer = _TimerService:SetTimerRepeat(C,1.0)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="skill_v" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.Entity.Common.fever = true
+local parent = self.Entity
+local Eff = _SpawnService:SpawnByModelId("model://1e9e9224-bb6f-4859-837a-a8186ec66888","FeverEff",Vector3.zero,parent)
+local a = function()
+	self.Entity.Common.fever = false
+	self.Entity.FeverComponent.fever_able = false
+	self.Entity.FeverComponent.dead_num = 0
+	Eff:Destroy()
+	self.Entity.FeverComponent:feverUI_End()
+end
+_TimerService:SetTimerOnce(a,10)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="hitself" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.Entity.HitComponent:OnHit(self.Entity,100,false,"",1)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="betray" ExecSpace="Server">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+if(self.Entity.Common.is_left) then
+	self.Entity.Common.is_left = false
+else
+	self.Entity.Common.is_left = true
+end
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleKeyDownEvent" EventName="KeyDownEvent" Target="service:InputService" Scope="Client">
+      <Code><![CDATA[
+-- Parameters
+local key = event.key
+--------------------------------------------------------
+if(self.Entity ~= _UserService.LocalPlayer) then return end
+if(key == KeyboardKey.Z)then
+	if(self.casting or self.lv < 1 or self.z_able == false) then return end
+	self:z_cool()
+	self:skill_z()
+	self:Z_coolTimer()
+end
+if(key == KeyboardKey.X)then
+	if(self.casting or self.lv < 2 or self.x_able == false) then return end
+	self:x_cool()
+	self:skill_x()
+	self:X_coolTimer()
+end
+if(key == KeyboardKey.C)then
+	if(self.casting or self.lv < 3 or self.c_able == false) then return end
+	self:skill_c()
+end
+if(key == KeyboardKey.V and self.Entity.FeverComponent.fever_able and self.casting == false) then
+	self:skill_v()
+	self.Entity.FeverComponent.fever_able = false
+end
+--if(key == KeyboardKey.P) then
+	--self:hitself()
+--end
+--if(key == KeyboardKey.O) then
+--	self:betray()
+--end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleHitEvent" EventName="HitEvent" Target="self" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local AttackCenter = event.AttackCenter
+local AttackerEntity = event.AttackerEntity
+local Damages = event.Damages
+local Extra = event.Extra
+local FeedbackAction = event.FeedbackAction
+local IsCritical = event.IsCritical
+local TotalDamage = event.TotalDamage
+--------------------------------------------------------
+if(self.Entity.Common.HP > 0) then 
+	self.Entity.Common:canmove()
+	self.casting = false
+end
+_TimerService:ClearTimer(self.timer)
+
+self:casting_bar_remove()
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
