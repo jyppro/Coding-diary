@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="0830e0e4-1139-4501-ba49-4f006d68ba13" Language="Lua" Name="StatComponent" Type="Component" Source="None" ModifyTime="2022-11-27T22:43:10.4107879+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="stat_table" Type="table" DefaultValue="{0,0,0,0,0}" SyncDirection="None" />
+    <CodeBlockProperty Name="Level" Type="number" DefaultValue="1" SyncDirection="All" />
+    <CodeBlockProperty Name="EXP" Type="number" DefaultValue="0" SyncDirection="None" />
+    <CodeBlockProperty Name="stat" Type="number" DefaultValue="1" SyncDirection="None" />
+    <CodeBlockProperty Name="EXP_table" Type="table" DefaultValue="{25,50,75,100,100,150,150,200,200,250,250,300,500,500,500,2000000000}" SyncDirection="None" />
+    <CodeBlockProperty Name="Background" Type="Entity" DefaultValue="d7b5e652-8ae2-4dfd-9e84-575b7b2ac740" SyncDirection="All" />
+    <CodeBlockProperty Name="Level5_Lock" Type="Entity" DefaultValue="ddf79560-e902-4897-b75b-5a1f77dd6e15" SyncDirection="None" />
+    <CodeBlockProperty Name="Level8_Lock" Type="Entity" DefaultValue="d6297367-1fbb-4c66-94bd-5bba60f700fd" SyncDirection="None" />
+    <CodeBlockProperty Name="Level_btn" Type="Entity" DefaultValue="b0bc496f-cc36-4f55-a94b-a7cc92221c66" SyncDirection="None" />
+    <CodeBlockProperty Name="stat_num" Type="Entity" DefaultValue="b5b5decf-c37a-4eab-a244-44bcb5dfd071" SyncDirection="None" />
+    <CodeBlockProperty Name="ATK_UI" Type="Entity" DefaultValue="294ae40b-f76a-4720-a259-98882cf97110" SyncDirection="None" />
+    <CodeBlockProperty Name="HP_UI" Type="Entity" DefaultValue="cf6117e9-f23e-4af5-996a-4473e46d8b9b" SyncDirection="None" />
+    <CodeBlockProperty Name="Skill_UI" Type="Entity" DefaultValue="da5f6ef0-3cf6-4be3-ba7c-1e63d53a0903" SyncDirection="None" />
+    <CodeBlockProperty Name="Monster_UI" Type="Entity" DefaultValue="f9110454-23b7-4bed-9255-d300c1743fb4" SyncDirection="None" />
+    <CodeBlockProperty Name="Build_UI" Type="Entity" DefaultValue="81b26b2c-28a0-4395-8d9e-4cc738ce6bf4" SyncDirection="None" />
+    <CodeBlockProperty Name="Skill_1" Type="Entity" DefaultValue="f53aad4d-cb32-492a-bae0-31cb4d95ebbe" SyncDirection="None" />
+    <CodeBlockProperty Name="Skill_2" Type="Entity" DefaultValue="c1950389-707e-40b5-b8b4-fbed2ee1ad0a" SyncDirection="None" />
+    <CodeBlockProperty Name="Skill_3" Type="Entity" DefaultValue="6e8c1431-59f4-4e46-90d5-753f56b23686" SyncDirection="None" />
+    <CodeBlockProperty Name="Skill_1_mob" Type="Entity" DefaultValue="30a2925a-f7c9-4f6b-b5f6-34b51cb445dc" SyncDirection="None" />
+    <CodeBlockProperty Name="Skill_2_mob" Type="Entity" DefaultValue="ec3d63bd-02e9-4f9a-a428-e7196c37178e" SyncDirection="None" />
+    <CodeBlockProperty Name="Skill_3_mob" Type="Entity" DefaultValue="823535bc-6d5e-44b1-a5ea-35fb4cc9ea17" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="StatUP" ExecSpace="All">
+      <Return Type="boolean" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="stat" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+--stat = {1:attack,2:hp,3:skill,4:monster,5:building} stat은 int로 올것
+
+if(self.stat == 0) then
+	--log("nostat")	
+	return false
+elseif(self.stat_table[stat] == 1 and self.Level < 5) then
+	--log("stat2 need lv5")
+	return false
+elseif(self.stat_table[stat] == 2 and self.Level < 8) then
+	--log("stat3 need lv8")
+	return false
+elseif(self.stat_table[stat] == 3) then
+	--log("full_stat")
+	return false
+else
+	if (stat == 1) then
+		self.Entity.PlayerAttack:Change_offence_power(tonumber(_DataService:GetCell("stat",2,self.stat_table[1]+3)))
+	elseif (stat == 2) then
+		self.Entity.Common:Change_MaxHP(tonumber(_DataService:GetCell("stat",1,self.stat_table[2]+3)))
+	elseif (stat == 3) then
+		self.Entity.SkillComponent.lv = self.Entity.SkillComponent.lv + 1
+		if self.Entity.SkillComponent.lv == 1 then
+			self.Skill_1.SpriteGUIRendererComponent.ImageRUID = "7bc971f7a7f94119a25cdf4ee3a9f63d" -- 배틀킹 바 활성화
+			self.Skill_1_mob.SpriteGUIRendererComponent.ImageRUID = "7bc971f7a7f94119a25cdf4ee3a9f63d"
+		elseif self.Entity.SkillComponent.lv == 2 then
+			self.Skill_2.SpriteGUIRendererComponent.ImageRUID = "0aadfea3439e4353a227884cd2f73d14" -- 속성스킬 활성화
+			self.Skill_2_mob.SpriteGUIRendererComponent.ImageRUID = "0aadfea3439e4353a227884cd2f73d14"
+		elseif self.Entity.SkillComponent.lv == 3 then
+			self.Skill_3.SpriteGUIRendererComponent.Color = Color.white -- 귀환 활성화
+			self.Skill_3_mob.SpriteGUIRendererComponent.Color = Color.white
+		end
+	elseif (stat == 4) then
+		self.Entity.MonsterSummonComponent.lv = self.Entity.MonsterSummonComponent.lv + 1
+	elseif (stat == 5) then
+		self.Entity.PlayerBuilding.lv = self.Entity.PlayerBuilding.lv + 1
+		self.Entity.PlayerBuilding:Ban()
+	end
+	self.stat_table[stat] = self.stat_table[stat] + 1
+	self.stat = self.stat - 1
+	self.stat_num.TextComponent.Text = "Stat : " ..tostring(math.floor(self.stat))
+	if self.stat <= 0 then
+		self.Level_btn.SpriteGUIRendererComponent.ImageRUID = "b9ab8455d5737bf4cb21433f00fdc19d" -- 스탯 없으면 반짝임 끄기
+	end
+	return true
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="GetEXP" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="EXP" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+self.EXP = self.EXP + EXP
+if(self.EXP >= self.EXP_table[math.floor(self.Level)]) then
+	self.EXP = self.EXP - self.EXP_table[math.floor(self.Level)]
+	self.Level = self.Level + 1
+	self.stat = self.stat + 1
+	--log("lvUP")
+	self:LevelUp()
+	self:StatUnlock()
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+--self:GetEXP(200)
+--self:GetEXP(200)
+--self:GetEXP(20)
+--self:GetEXP(20)
+--self:GetEXP(20)
+--self:GetEXP(20)
+--self:GetEXP(20)
+--self:GetEXP(200)
+--self:GetEXP(200)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="LevelUp" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+if (self.Entity ~= _UserService.LocalPlayer) then return end
+local Sound = self.Background.SoundComponent
+if self.Entity.StatComponent.Level > 1 then
+	self.Level_btn.SpriteGUIRendererComponent.ImageRUID = "f56452e2c7464911bd7696e9d36ad8db" -- 반짝이기
+	local parent = self.Entity
+	local Eff = _SpawnService:SpawnByModelId("model://e752cc2d-4e57-4a4d-92fa-2f14cc3013dd","LevelUpEffect",Vector3.zero,parent)
+	Sound.Enable = true
+	wait(2)
+	Eff:Destroy()
+	Sound.Enable = false
+	self:stat_update()
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="StatUnlock" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+if(self.Entity == _UserService.LocalPlayer) then
+	if self.Level >= 5 then
+		self.Level5_Lock.Enable = false
+	end
+	
+	if self.Level >= 8 then
+		self.Level8_Lock.Enable = false
+	end
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="stat_update" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+if(self.Entity == _UserService.LocalPlayer) then
+	self.stat_num.TextComponent.Text = "Stat : " ..tostring(math.floor(self.stat))
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="fill_color" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="e" Type="Entity" SyncDirection="None" />
+        <CodeBlockProperty Name="color" Type="Color" DefaultValue="Color(0,0,0,0)" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if(e.SpriteGUIRendererComponent.Color ~= color)then
+	e.SpriteGUIRendererComponent.Color = color
+else
+	self:fill_color(e.Children[1],color)
+end
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleKeyDownEvent" EventName="KeyDownEvent" Target="service:InputService" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local key = event.key
+--------------------------------------------------------
+if(self.Entity ~= _UserService.LocalPlayer) then return end
+if(key == KeyboardKey.Alpha1 and self:StatUP(1)) then
+	self:fill_color(self.ATK_UI, Color.red)
+elseif(key == KeyboardKey.Alpha2 and self:StatUP(2))then
+	self:fill_color(self.HP_UI, Color.blue)
+elseif(key == KeyboardKey.Alpha3 and self:StatUP(3))then
+	self:fill_color(self.Skill_UI, Color.green)
+elseif(key == KeyboardKey.Alpha4 and self:StatUP(4))then
+	self:fill_color(self.Monster_UI, Color.magenta)
+elseif(key == KeyboardKey.Alpha5 and self:StatUP(5))then
+	self:fill_color(self.Build_UI, Color.gray)
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
