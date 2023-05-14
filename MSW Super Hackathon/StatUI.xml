@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="298ef571-6901-4b5f-a94c-4eba862f7861" Language="Lua" Name="StatUI" Type="Component" Source="None" ModifyTime="2022-11-26T21:44:33.4553659+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="statUI" Type="Entity" DefaultValue="e6f6a245-1c79-4d20-97ef-b65ca2ee91c7" SyncDirection="None" />
+  </Properties>
+  <Methods />
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleButtonClickEvent" EventName="ButtonClickEvent" Target="self" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local Entity = event.Entity
+--------------------------------------------------------
+if self.statUI.Visible == false then
+	self.statUI.Visible = true
+elseif self.statUI.Visible == true then
+	self.statUI.Visible = false
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+    <CodeBlockEntityEventHandler Name="HandleKeyDownEvent" EventName="KeyDownEvent" Target="service:InputService" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local key = event.key
+--------------------------------------------------------
+if key == KeyboardKey.Escape then
+	self.statUI.Visible = false
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
