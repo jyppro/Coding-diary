@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="e1e29249-6378-42dd-b652-d7c1e9fedfb7" Language="Lua" Name="SucessMessage" Type="Component" Source="None" ModifyTime="2022-11-27T01:44:44.5026845+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="SucessText" Type="Entity" DefaultValue="92ff12e7-13a8-4720-8ec5-5e71a4b6ebfe" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="Sucess" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+if self.Entity.BuildZone == false then return end
+local aaa = function()
+	if self.Entity.BuildZone.buildable == true then
+		self.SucessText.Enable = true
+		wait(2)
+		self.SucessText.Enable = false
+	end
+end
+
+_TimerService:SetTimerOnce(aaa)
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>
