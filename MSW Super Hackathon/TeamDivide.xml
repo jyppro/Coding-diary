@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="a97f2fbe-f563-4576-94f7-5a33e1c42aee" Language="Lua" Name="TeamDivide" Type="Component" Source="None" ModifyTime="2022-11-27T20:58:36.1723593+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="playerNumPerGame" Type="number" DefaultValue="4" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+if _InstanceMapService:IsInstance() then
+	local readyPlayers = {}
+	for k, v in pairs(_UserService:GetUsersByMapName("map01")) do
+		readyPlayers[#readyPlayers+1] = v
+	end
+	--2명 팀 상태 4명으로 고쳐야
+	local random1 = _UtilLogic:RandomIntegerRange(1,2)
+	local random2 = _UtilLogic:RandomIntegerRange(random1+1,4)
+	for j = 1, math.floor(self.playerNumPerGame) do
+		if (j == random1 or j == random2) then
+			readyPlayers[j].Common.is_left = true
+			self:changeNameTag("013300af3ddb4c9bbe96ff6368daf576",readyPlayers[j])
+			readyPlayers[j].MovementComponent:SetPosition(Vector2(-57, 10))
+		else
+			readyPlayers[j].Common.is_left = false
+			self:changeNameTag("063b41eb9d474148b9debd39d3e68fa8",readyPlayers[j])
+			readyPlayers[j].MovementComponent:SetPosition(Vector2(30, 10))
+		end
+	end
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="changeNameTag" ExecSpace="Multicast">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="RUID" Type="string" SyncDirection="None" />
+        <CodeBlockProperty Name="E" Type="Entity" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+E.NameTagComponent.NameTagRUID = RUID
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>
