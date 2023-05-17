@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="5cd954ce-97e2-4c8b-917b-310bbec64dfc" Language="Lua" Name="TeamNameTag" Type="Component" Source="None" ModifyTime="2022-11-25T18:14:57.2502699+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties />
+  <Methods>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self:NameTage_Change()
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="NameTage_Change" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+if(self.Entity ~= _UserService.LocalPlayer) then return end
+if (self.Entity.Common.is_left == true and self.Entity.Common.is_player == true) then
+	self.Entity.NameTagComponent.NameTagRUID = "013300af3ddb4c9bbe96ff6368daf576" -- 레지스탕스
+elseif (self.Entity.Common.is_left == false and self.Entity.Common.is_player == true) then
+	self.Entity.NameTagComponent.NameTagRUID = "063b41eb9d474148b9debd39d3e68fa8" -- 블랙윙
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnSyncProperty" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="name" Type="string" SyncDirection="None" />
+        <CodeBlockProperty Name="value" Type="any" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>
