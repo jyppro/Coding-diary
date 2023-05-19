@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="77df6d44-4515-4969-8c58-68efcf854d7c" Language="Lua" Name="ToLobbyComponent" Type="Component" Source="None" ModifyTime="2022-11-19T16:27:59.9893763+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties />
+  <Methods />
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleButtonClickEvent" EventName="ButtonClickEvent" Target="self" Scope="Client">
+      <Code><![CDATA[
+-- Parameters
+local Entity = event.Entity
+--------------------------------------------------------
+ -- 버튼 누른 유저를 로비로 보내기
+_UserService.LocalPlayer.Player:back(_UserService.LocalPlayer.PlayerComponent.UserId)
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
