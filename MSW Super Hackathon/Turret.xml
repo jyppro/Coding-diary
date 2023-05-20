@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="515d56fd-85c6-46f8-9009-1c2fffebc818" Language="Lua" Name="Turret" Type="Extend" Source="None" Target="MOD.Core.AttackComponent" ModifyTime="2022-11-27T22:53:52.7520866+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="attackInterval" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="damage" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="Enemy_List" Type="array" DefaultValue="string" SyncDirection="All" />
+    <CodeBlockProperty Name="timerId" Type="number" DefaultValue="0" SyncDirection="All" />
+    <CodeBlockProperty Name="is_timer" Type="boolean" DefaultValue="false" SyncDirection="All" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="IsAttackTarget" ExecSpace="All">
+      <Return Type="boolean" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="defender" Type="Entity" SyncDirection="None" />
+        <CodeBlockProperty Name="attackInfo" Type="string" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if(defender.Common.is_neutral and defender.Common.is_monster) then
+	return false
+elseif defender.Common.is_left ~= self.Entity.Common.is_left then
+	return true
+elseif defender.Common.is_left == self.Entity.Common.is_left then
+	return false
+end
+
+return __base:IsAttackTarget(defender,attackInfo)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="AttackNear" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+local transformComponent = self.Entity.TransformComponent
+
+if isvalid(transformComponent) then
+	local worldPosition = transformComponent.WorldPosition
+	local scaleX = math.abs(transformComponent.Scale.x)
+	local scaleY = math.abs(transformComponent.Scale.y)
+	self._T.shape.Size = Vector2(self._T.spriteSize.x * scaleX, self._T.spriteSize.y * scaleY)
+	self._T.shape.Position = Vector2(worldPosition.x + self._T.positionOffset.x * scaleX, worldPosition.y + self._T.positionOffset.y * scaleY)
+end
+
+self:AttackFast(self._T.shape, nil)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ServerOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+self._T.shape = BoxShape(Vector2.zero, Vector2.one, 0)
+-- sprite 사이즈를 가져와 공격 영역으로 사용한다
+_ResourceService:PreloadAsync({self.Entity.SpriteRendererComponent.SpriteRUID}, function()
+	local clip = _ResourceService:LoadAnimationClipAndWait(self.Entity.SpriteRendererComponent.SpriteRUID)
+	local firstFrameSprite = clip.Frames[10].FrameSprite
+	local firstSpriteSizeInPixel = Vector2(firstFrameSprite.Width, firstFrameSprite.Height)
+	local ppu = firstFrameSprite.PixelPerUnit
+
+	self._T.spriteSize = firstSpriteSizeInPixel / ppu
+	self._T.positionOffset = (firstSpriteSizeInPixel / 2 - firstFrameSprite.PivotPixel:ToVector2()) / ppu
+	
+	_TimerService:SetTimerRepeat(function() 
+		self:AttackNear()
+	end, self.attackInterval, 2.92)
+end)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="CalcDamage" ExecSpace="All">
+      <Return Type="int" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="attacker" Type="Entity" SyncDirection="None" />
+        <CodeBlockProperty Name="defender" Type="Entity" SyncDirection="None" />
+        <CodeBlockProperty Name="attackInfo" Type="string" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if(defender.Common.is_monster) then 
+	return self.damage*1.3
+elseif(defender.Common.is_player) then 
+	return self.damage*0.7
+else
+	return self.damage
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="remove" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="Coll_list" Type="array" DefaultValue="string" SyncDirection="None" />
+        <CodeBlockProperty Name="n" Type="string" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+for id = #Coll_list, 1, -1 do
+	if(Coll_list[id] == n) then
+		table.remove(Coll_list,id)
+	end
+end
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>
