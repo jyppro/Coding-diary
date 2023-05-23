@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="d06138a9-cd25-47a1-9b75-60599392c7dc" Language="Lua" Name="Tutorial_PageSwap" Type="Component" Source="None" ModifyTime="2022-11-18T02:47:36.1119411+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="count" Type="number" DefaultValue="1" SyncDirection="None" />
+    <CodeBlockProperty Name="Photo1" Type="Entity" DefaultValue="a336f27b-cf27-4947-9957-e3f46341d6e4" SyncDirection="None" />
+    <CodeBlockProperty Name="Text1" Type="Entity" DefaultValue="4b4b43af-df0e-47fd-b7b3-2a6691cf5795" SyncDirection="None" />
+    <CodeBlockProperty Name="Photo2" Type="Entity" DefaultValue="087260b0-28f3-4f3a-992c-1d6dea2dc9c0" SyncDirection="None" />
+    <CodeBlockProperty Name="Text2" Type="Entity" DefaultValue="71ff24d5-fc7a-4914-ba06-1b24ba64e8a2" SyncDirection="None" />
+    <CodeBlockProperty Name="Photo3" Type="Entity" DefaultValue="ead920db-c6e1-4740-96e3-ed545c47a991" SyncDirection="None" />
+    <CodeBlockProperty Name="Text3" Type="Entity" DefaultValue="15864a77-6bcb-4ac7-bc2a-ee9617afc104" SyncDirection="None" />
+    <CodeBlockProperty Name="Photo4" Type="Entity" DefaultValue="15c0c08c-23c0-403e-ada3-a6d99a95d856" SyncDirection="None" />
+    <CodeBlockProperty Name="Text4" Type="Entity" DefaultValue="de2cc228-4f7b-45a4-86ff-4c30c83466bb" SyncDirection="None" />
+    <CodeBlockProperty Name="Photo5" Type="Entity" DefaultValue="bb5d1003-2ae6-4160-8a14-70285bcf0546" SyncDirection="None" />
+    <CodeBlockProperty Name="Text5" Type="Entity" DefaultValue="4122752b-fd7d-49a6-a488-88b8ffe012ad" SyncDirection="None" />
+    <CodeBlockProperty Name="Page_num" Type="Entity" DefaultValue="dde8a598-6968-46d7-9f42-8b20d94c3dd9" SyncDirection="None" />
+    <CodeBlockProperty Name="Next" Type="Entity" DefaultValue="8b01dfbd-4d2f-4f58-aafe-8a20d4879284" SyncDirection="None" />
+    <CodeBlockProperty Name="Before" Type="Entity" DefaultValue="33e36537-4d6c-40ab-a1e4-797a4ebc923e" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="Swap" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+if self.count < 1 then
+	self.count = 5
+	self.Photo4.Enable = false
+	self.Text4.Enable = false
+	self.Photo5.Enable = true
+	self.Text5.Enable = true
+	self.Photo1.Enable = false
+	self.Text1.Enable = false
+	self.Page_num.TextComponent.Text = string.format("5 / 5 페이지")
+end
+
+if self.count > 5 then
+	self.count = 1
+	self.Photo1.Enable = true
+	self.Text1.Enable = true
+	self.Photo2.Enable = false
+	self.Text2.Enable = false
+	self.Photo5.Enable = false
+	self.Text5.Enable = false
+	self.Page_num.TextComponent.Text = string.format("1 / 5\n페이지")
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.Photo1.Enable = true
+self.Text1.Enable = true
+self.Page_num.TextComponent.Text = string.format("1 / 5\n페이지")
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleButtonClickEvent" EventName="ButtonClickEvent" Target="self" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local Entity = event.Entity
+--------------------------------------------------------
+if Entity == self.Next then
+	self.count = self.count + 1
+	self:Swap()
+elseif Entity == self.Before then
+	self.count = self.count - 1
+	self:Swap()
+end
+
+if self.count == 1 then
+	self.Photo1.Enable = true
+	self.Text1.Enable = true
+	self.Photo2.Enable = false
+	self.Text2.Enable = false
+	self.Photo5.Enable = false
+	self.Text5.Enable = false
+	self.Page_num.TextComponent.Text = string.format("1 / 5\n페이지")
+elseif self.count == 2 then
+	self.Photo1.Enable = false
+	self.Text1.Enable = false
+	self.Photo2.Enable = true
+	self.Text2.Enable = true
+	self.Photo3.Enable = false
+	self.Text3.Enable = false
+	self.Page_num.TextComponent.Text = string.format("2 / 5 페이지")
+elseif self.count == 3 then
+	self.Photo2.Enable = false
+	self.Text2.Enable = false
+	self.Photo3.Enable = true
+	self.Text3.Enable = true
+	self.Photo4.Enable = false
+	self.Text4.Enable = false
+	self.Page_num.TextComponent.Text = string.format("3 / 5 페이지")
+elseif self.count == 4 then
+	self.Photo3.Enable = false
+	self.Text3.Enable = false
+	self.Photo4.Enable = true
+	self.Text4.Enable = true
+	self.Photo5.Enable = false
+	self.Text5.Enable = false
+	self.Page_num.TextComponent.Text = string.format("4 / 5 페이지")
+elseif self.count == 5 then
+	self.Photo4.Enable = false
+	self.Text4.Enable = false
+	self.Photo5.Enable = true
+	self.Text5.Enable = true
+	self.Photo1.Enable = false
+	self.Text1.Enable = false
+	self.Page_num.TextComponent.Text = string.format("5 / 5 페이지")
+end
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>
