@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="UIMyInfo" Language="Lua" Name="UIMyInfo" Type="Component" Source="None" ModifyTime="2022-11-24T21:13:27.627372+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description>&lt;여기에 설명을 추가합니다&gt;</Description>
+  <Properties>
+    <CodeBlockProperty Name="hpBar" Type="Component" DefaultValue=":62" SyncDirection="None" />
+    <CodeBlockProperty Name="hpText" Type="Component" DefaultValue=":52" SyncDirection="None" />
+    <CodeBlockProperty Name="maxWidth_HP" Type="number" DefaultValue="0" SyncDirection="None" />
+    <CodeBlockProperty Name="ExpBar" Type="Component" DefaultValue=":UITransformComponent" SyncDirection="None" />
+    <CodeBlockProperty Name="ExpText" Type="Component" DefaultValue=":TextComponent" SyncDirection="None" />
+    <CodeBlockProperty Name="maxWidth_Exp" Type="number" DefaultValue="0" SyncDirection="None" />
+    <CodeBlockProperty Name="LevelUI" Type="Entity" DefaultValue="b0bc496f-cc36-4f55-a94b-a7cc92221c66" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments />
+      <Code><![CDATA[
+local currentPath = self.Entity.Path
+
+local nameText = _EntityService:GetEntityByPath(currentPath .. "/info_top/text_name") -- 플레이어 이름 구성
+nameText.TextComponent.Text = _UserService.LocalPlayer.PlayerComponent.Nickname
+
+self.hpText = _EntityService:GetEntityByPath(currentPath .. "/info_bottom/Hp/text_value").TextComponent -- 체력바 구성
+self.hpBar = _EntityService:GetEntityByPath(currentPath .. "/info_bottom/Hp/img_bar").UITransformComponent
+self.maxWidth_HP = self.hpBar.RectSize.x
+
+self.ExpText = _EntityService:GetEntityByPath(currentPath .. "/info_bottom/Exp/text_value").TextComponent -- 경험치바 구성
+self.ExpBar = _EntityService:GetEntityByPath(currentPath .. "/info_bottom/Exp/img_bar").UITransformComponent
+self.maxWidth_Exp = self.ExpBar.RectSize.x
+
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnUpdate" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="delta" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if self.hpBar ~= nil then -- 체력 깎이고 회복하는 UI
+	local hp = _UserService.LocalPlayer.Common.HP
+	local maxhp = _UserService.LocalPlayer.Common.MaxHP
+	self.hpBar.RectSize = Vector2(hp / maxhp * self.maxWidth_HP,self.hpBar.RectSize.y)
+	self.hpText.Text = string.format("%d / %d", hp,maxhp)
+end
+
+if self.ExpBar ~= nil then -- 경험치 올라가는 UI
+	local Exp = _UserService.LocalPlayer.StatComponent.EXP
+	local maxExp = _UserService.LocalPlayer.StatComponent.EXP_table[math.floor(_UserService.LocalPlayer.StatComponent.Level)]
+	self.ExpBar.RectSize = Vector2(Exp / maxExp * self.maxWidth_Exp, self.ExpBar.RectSize.y)
+	self.ExpText.Text = string.format("%d / %d", Exp,maxExp)
+end
+
+local Level_Value = _UserService.LocalPlayer.StatComponent.Level -- 레벨 표시
+self.LevelUI.TextComponent.Text = string.format("LV %d",Level_Value)
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>
