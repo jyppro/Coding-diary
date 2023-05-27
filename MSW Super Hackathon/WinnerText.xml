@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="794513cb-baae-4d41-b3b4-97dc9844d23f" Language="Lua" Name="WinnerText" Type="Component" Source="None" ModifyTime="2022-11-19T00:50:19.0869061+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="ResultText" Type="Entity" DefaultValue="2ba1c3b3-0241-4faa-9a14-78f02796a41d" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="Result_Black" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.ResultText.TextComponent.Text = string.format("블랙윙의 승리!!")
+-- 수수께끼의 광물(승점) 획득량 표시 및 랭킹 상승 표시(?)
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="Result_Regi" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.ResultText.TextComponent.Text = string.format("레지스탕스의 승리!!")
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>
