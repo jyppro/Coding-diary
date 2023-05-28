@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="c812ef7b-42fd-4819-b501-ebc2b3391596" Language="Lua" Name="WinPage_Open" Type="Component" Source="None" ModifyTime="2022-11-25T16:08:24.8305302+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="0" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="WinPage" Type="Entity" DefaultValue="f4fd5301-d2dd-4abd-b40e-be20e4e81cad" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="Open" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.WinPage.Enable = true
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>
