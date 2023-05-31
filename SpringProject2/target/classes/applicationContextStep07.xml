@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+ 	<bean id="collectionBean" class="com.myspring.step07.CollectionBean">
+		<property name="addressList">                        <!-- step07  -> Map 타입 객체 사용시   --> 
+			<map>
+				<entry>
+					<key>
+						<value>고길동</value>
+					</key>
+					<value>서울시 강남구 역삼동</value>
+				</entry>
+				<entry>
+					<key>
+						<value>마이콜</value>
+					</key>
+					<value>서울시 강서구 화곡동</value>
+				</entry>
+			</map>
+		</property>
+	</bean>
+	
+</beans>
+ 

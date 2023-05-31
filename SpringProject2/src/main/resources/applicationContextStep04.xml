@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+    <bean id="tv" class="com.myspring.step04.SamsungTV"> 
+    	<property name="speaker" ref="sony"></property>
+    </bean> 
+    <bean id="sony" class="com.myspring.step04.SonySpeaker"></bean>
+	<bean id="apple" class="com.myspring.step04.AppleSpeaker"></bean>   <!--  step04에서 사용 -->	
+	
+</beans>
+
+<!--  p 네임스페이스 사용시         
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+ <bean id="tv" class="com.myspring.step04.SamsungTV" p:speaker-ref="sony"/> 
+ <bean id="sony" class="com.myspring.step04.SonySpeaker"></bean>
+ <bean id="apple" class="com.myspring.step04.AppleSpeaker"></bean> 
+
+</beans>
+
+ -->

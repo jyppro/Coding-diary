@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  	<bean id="collectionBean" class="com.myspring.step08.CollectionBean">
+		<property name="addressList">
+			<props>                                            <!-- step08  -> Properties  타입 객체 사용시   --> 
+				<prop key="고길동">서울시 강남구 역삼동</prop>
+				<prop key="마이콜">서울시 강서구 화곡동</prop>
+			</props>
+		</property>
+	</bean>
+ </beans>
+
+ 
