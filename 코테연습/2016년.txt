@@ -1,0 +1,10 @@
+public class Solution {
+    public string solution(int a, int b) {
+       string answer = "";
+
+            DateTime dateValue = new DateTime(2016,a,b);
+            answer = dateValue.DayOfWeek.ToString().Substring(0,3).ToUpper();
+
+            return answer;
+    }
+}
