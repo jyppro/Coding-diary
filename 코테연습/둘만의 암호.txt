@@ -1,0 +1,22 @@
+using System;
+
+public class Solution {
+    public string solution(string s, string skip, int index) {
+        string answer = "";
+        char temp;
+        // s를 index만큼 뒤에 문자열로 변환, skip에 있는 알파벳은 건너뛰기
+        for(int i = 0; i < s.Length; i++) // s 돌리기
+        {
+            temp = s[i]; // s저장
+            for(int j = 0; j < index; ) // 인덱스까지 돌리기
+            {
+                temp = (char)((int)temp + 1); // temp에 int형으로 변환해서 1을 더한 값을 다시 char로 변환시켜 저장
+                if(temp > 'z') { temp = 'a'; } // z 넘어가면 a로 돌아오게 만들기
+                if(skip.Contains(temp) == true) { continue; } // skip에 temp가 있으면 컨티뉴
+                j++;
+            }
+            answer += temp;
+        }
+        return answer;
+    }
+}
