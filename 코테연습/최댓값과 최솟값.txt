@@ -1,0 +1,14 @@
+using System;
+using System.Linq;
+
+public class Solution
+{
+        public string solution(string s)
+        {
+            string answer = "";
+            string[] arr = s.Split(' ');
+            int[] num_arr = Array.ConvertAll(arr, num => int.Parse(num));
+            answer = num_arr.Min().ToString() + " " + num_arr.Max().ToString();
+            return answer;
+        }
+}
