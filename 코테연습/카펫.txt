@@ -1,0 +1,23 @@
+public class Solution {
+    public int[] solution(int brown, int yellow) {
+        int[] answer = new int[2] {0, 0};
+            int x, y;
+            int width = brown + yellow; // 크기 = 갈색 + 노란색
+            for(int i = 1; i <= width; i++)
+            {
+                x = i;
+                y = width / x;
+                if (x > y || x == y) // 가로가 세로보다 크거나 같다면
+                {
+                    if ((width - ((x * 2) + (y * 2) - 4)) == yellow)
+                    // 크기에서 가로,세로를 2로 곱한 값의 합에서 4를 뺀 값을 뺀 것이 yellow 개수와 같다면
+                    {
+                        answer[0] = x;
+                        answer[1] = y;
+                        break;
+                    }
+                }
+            }
+            return answer;
+    }
+}
