@@ -1,0 +1,172 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
+ 
+public class Solution {
+    public int solution(int[,] game_board, int[,] table) {
+        
+        int answer = 0;
+        
+        var GameBoard = new board(game_board, 0).Get_Blocks();
+        var Table = new board(table, 1).Get_Blocks();
+ 
+        foreach(var board_block in GameBoard) {
+            
+            int[,] finded = null;
+            
+            foreach(var table_block in Table) {
+                
+                if(isEqual(board_block, table_block)) {
+                    finded = table_block;
+                    break;
+                }
+                
+                else {
+                    int[,] rotated = table_block;
+                    
+                    for(int i=0; i<3; i++) {
+                        rotated = Rotate90(rotated);
+                        if(isEqual(board_block, rotated)) {
+                            finded = table_block;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            if(finded != null) {
+                answer 
+                += board_block.Cast<int>().Count(e => e == 1);
+                
+                Table.Remove(finded);
+            }
+        }
+        
+        return answer;
+    }
+    
+    public int[,] Rotate90(int[,] data) {
+        
+        int width = data.GetLength(1);
+        int height = data.GetLength(0);
+        int[,] result = new int[width, height];
+ 
+        for(int i=0; i<width; i++){
+            for(int j=0; j<height; j++){
+                result[i, j] = data[j, width-i-1];
+            }
+        }
+        
+        return result;
+    }
+ 
+    private bool isEqual(int[,] A, int[,] B) {
+        bool result = true;
+        
+        if(A.GetLength(0) != B.GetLength(0) 
+           || A.GetLength(1) != B.GetLength(1)) return false;
+        
+        for(int i=0; i<A.GetLength(0); i++){
+            for(int j=0; j<A.GetLength(1); j++){
+                if(A[i, j] != B[i, j]){
+                    result = false;
+                    break;
+                }
+            }
+        }
+        
+        return result;
+    }
+}
+ 
+ 
+public class board {
+ 
+    public Dictionary<Vector2, Block> Map;
+    
+    public board(int[,] data, int validValue) { 
+        Map = new Dictionary<Vector2, Block>();
+        Initialize(data, validValue);
+    }
+    
+    public void Initialize(int[,] data, int validValue) {
+        
+        int size = data.GetLength(0);
+ 
+        for(int i=0; i<size; i++){
+            for(int j=0; j<size; j++){
+                
+                Vector2 key = new Vector2(i, j);
+                
+                if(data[key.x, key.y] == validValue && !Map.ContainsKey(key))
+                    connect(getConnectedBlock(key), key);
+            }
+        } 
+    }
+    
+    public List<int[,]> Get_Blocks() {
+        
+        var result = new List<int[,]>();
+        
+        foreach(var block in Map.Values.Distinct()) {
+            result.Add(block.ToArray());
+        }
+        
+        return result; 
+    }
+    
+    private void connect(Block block, Vector2 key){
+        block.Add(key);
+        Map.Add(key, block);
+    }
+    
+    private Block getConnectedBlock(Vector2 key) {
+        var leftKey = new Vector2(key.x, key.y - 1);
+        var upKey = new Vector2(key.x - 1, key.y);
+        
+        var left = Map.ContainsKey(leftKey) ? Map[leftKey] : null;
+        var up = Map.ContainsKey(upKey) ? Map[upKey] : null;
+ 
+        if(left != up && left != null && up != null) combine(left, up);
+        
+        if(left != null) return left;
+        else if(up != null) return up;
+        else return new Block();
+    }
+    
+    private void combine(Block a, Block b){
+        foreach(var e in b.List) { 
+            a.List.Add(e);
+            Map[e] = a;                    
+        }
+    }
+}
+ 
+public class Block {
+    public HashSet<Vector2> List 
+        = new HashSet<Vector2>();
+    
+    public void Add(Vector2 key) {
+        List.Add(key);
+    }
+    
+    public int[,] ToArray() {
+        var pivotX = List.Min(e => e.y);
+        var pivotY = List.Min(e => e.x);
+ 
+        var width = List.Max(e => e.y) - pivotX + 1;
+        var height = List.Max(e => e.x) - pivotY + 1;
+ 
+        var result = new int[height, width];
+ 
+        foreach(var e in List)
+            result[e.x - pivotY, e.y - pivotX] = 1;
+ 
+        return result;
+    }
+}
+ 
+public struct Vector2 {
+    public int x, y;
+    public Vector2(int x, int y) { this.x = x; this.y = y;}
+}
