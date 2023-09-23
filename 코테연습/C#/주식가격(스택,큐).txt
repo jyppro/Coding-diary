@@ -1,0 +1,38 @@
+//프로그래머스 스택/큐 주식가격
+
+using System;
+using System.Collections.Generic;   //큐 라이브러리
+
+public class Solution {
+    public int[] solution(int[] prices) {
+        //answer배열 선언과 크기 값 설정        
+        int[] answer = new int[] {};
+        answer = new int[prices.Length];
+        
+        //큐 변수 선언
+        Queue<int> queue = new Queue<int>(prices);
+        
+        //초 단위로 기록된 주식가격이 담긴 배열 prices가 매개변수로 주어질 때, 
+        //가격이 떨어지지 않은 기간은 몇 초인지를 return 하도록 solution 함수를 완성하세요.
+        //즉, 들어온 가격이 초 단위로 언제까지 떨어지느냐를 확인하면 답이 나옴.
+        for(int i=0; i<prices.Length; i++)
+        {
+            int time=0;                                         //시간
+            int temp = queue.Dequeue();                         //현재 가격
+            
+            for(int j=i+1; j<prices.Length; j++)
+            {
+                time++;                                         //시간초 더하기
+                
+                //현재 가격과 각 배열의 가격 비교해 현재 가격이 더 크면 가격이 떨어졌음을 확인.
+                //또는 j의 값이 가격 배열의 크기와 같으면 끝까지 떨어지지 않음을 확인.
+                if(temp > prices[j] || j == prices.Length-1)    
+                {
+                    answer[i] = time;
+                    break;    
+                }
+            }
+        }
+        return answer;
+    }
+}

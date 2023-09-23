@@ -1,0 +1,46 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+public class Solution {
+
+    Stack<string> st = new Stack<string>();
+
+    public int solution(string cur, string target, string[] words)
+    {
+         int ans = dfs(cur,target,words);
+        return ans == Int32.MaxValue ? 0 : ans;        
+    }
+
+    public int dfs(string cur, string target, string[] words)
+    {
+        int res = Int32.MaxValue;
+        if (cur == target)
+        {
+            return st.Count();
+        }
+        foreach (var w in words)
+        {
+            if (diff(cur, w) == 1 && !st.Contains(w))
+            {
+                st.Push(w);
+                res = Math.Min(res, dfs(w, target, words));
+                st.Pop();
+            }
+        }
+
+        return res;            
+    }
+    public int diff(string a, string b)
+    {
+        int res = 0;
+        for(int i=0; i<a.Length; i++)
+        {
+            if (a[i] != b[i])
+            {
+                res++;
+            }
+        }
+        return res;
+    }
+
+}

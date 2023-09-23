@@ -1,0 +1,15 @@
+using System;
+public class Solution {
+    public int solution(int n) {
+        int answer = 0;
+        for (int i = 2; i <= n; i++) { if (isPrime(i)) answer += 1; }
+        return answer;
+    }
+
+    public bool isPrime(int n)
+    {
+        int nr = (int)Math.Sqrt(n);
+        for (int i = 2; i <= nr; i++) { if (n % i == 0) return false; }
+        return true;
+    }
+}
