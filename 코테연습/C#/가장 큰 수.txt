@@ -1,0 +1,21 @@
+using System;
+using System.Collections.Generic;
+
+public class Solution {
+    public string solution(int[] numbers) {
+        List<string> lstnumber=new List<string>();
+        List<string> builder = new List<string>();
+        for(int i=0; i<numbers.Length; i++)
+        {
+            lstnumber.Add(numbers[i].ToString());
+        }
+        lstnumber.Sort((a,b)=>(b+a).CompareTo(a+b));
+        foreach(var str in lstnumber)
+        {
+            builder.Add(str);
+        }
+        string answer = string.Join("",builder);
+        if(answer[0]=='0') return "0";
+        return answer;
+    }
+}
